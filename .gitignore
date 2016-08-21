@@ -2,7 +2,6 @@
 *.userprefs
 
 # Build results
-[Bb]in/
 [Oo]bj/
 
 # User-specific files
