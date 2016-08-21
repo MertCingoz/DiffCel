@@ -61,7 +61,7 @@ namespace EmbeddedExcel
                 cmd.StartInfo.CreateNoWindow = true;
                 cmd.StartInfo.UseShellExecute = false;
                 cmd.Start();
-                cmd.StandardInput.WriteLine("git log --pretty=oneline --abbrev-commit path >raw.txt");
+                cmd.StandardInput.WriteLine("git log --pretty=oneline --abbrev-commit \"" + path + "\" >raw.txt");
                 cmd.StandardInput.Close();
                 cmd.WaitForExit();
 
@@ -75,6 +75,7 @@ namespace EmbeddedExcel
 
                 treeView1.Visible = false;
                 listView1.Visible = true;
+                
             }
         }
 
