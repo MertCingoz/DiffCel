@@ -37,7 +37,7 @@ namespace EmbeddedExcel
             foreach (var directory in directoryInfo.GetDirectories())
                 directoryNode.Nodes.Add(CreateDirectoryNode(directory));
             foreach (var file in directoryInfo.GetFiles())
-                if(file.Name.Contains(".xls"))
+                if(file.Name.Contains(".xls") && !file.Name.Contains("Temp"))
                     directoryNode.Nodes.Add(new TreeNode(file.Name));
             return directoryNode;
         }
@@ -83,13 +83,15 @@ namespace EmbeddedExcel
         {
             if (e.IsSelected)
             {
+                string dir = path.Substring(0, path.LastIndexOf("\\")+1);
+                string extension = path.Substring(path.LastIndexOf("."));
                 cmd.Start();
-                cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " TestWorkbook.xlsx >raw2.txt");
+                cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " \"" + path + "\" >raw2.txt");
+                cmd.StandardInput.WriteLine("git show " + e.Item.SubItems[0].Text + "\"" + path + "\" > Temp"+extension+ "\"");
                 cmd.StandardInput.Close();
                 cmd.WaitForExit();
-
                 textBox1.Text = System.IO.File.ReadAllText(@"raw2.txt");
-                excelWrapper1.OpenFile(AppDomain.CurrentDomain.BaseDirectory + path);
+                excelWrapper1.OpenFile(AppDomain.CurrentDomain.BaseDirectory +"Temp"+extension);
             }
         }
 

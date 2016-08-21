@@ -84,7 +84,7 @@ namespace EmbeddedExcel
 			if(!System.IO.File.Exists(filename)) throw new Exception();
 			m_ExcelFileName=filename.Replace("\\","/");
 			// Load the workbook in the WebBrowser control
-            this.WebBrowserExcel.Navigate(filename, false);
+            WebBrowserExcel.Navigate(filename, false);
 		}
 
 		public Workbook GetActiveWorkbook(string xlfile) {
@@ -156,6 +156,10 @@ namespace EmbeddedExcel
 			return null;
 		}
 	#endregion Methods
+
+
+
+
 
     }
 }

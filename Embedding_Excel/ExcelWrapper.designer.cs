@@ -38,38 +38,35 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.WebBrowserExcel=new System.Windows.Forms.WebBrowser();
-			this.OpenExcelFileDialog=new System.Windows.Forms.OpenFileDialog();
-			this.SuspendLayout();
-			// 
-			// WebBrowserExcel
-			// 
-			this.WebBrowserExcel.Dock=System.Windows.Forms.DockStyle.Fill;
-			this.WebBrowserExcel.Location=new System.Drawing.Point(0,0);
-			this.WebBrowserExcel.MinimumSize=new System.Drawing.Size(20,20);
-			this.WebBrowserExcel.Name="WebBrowserExcel";
-			this.WebBrowserExcel.Size=new System.Drawing.Size(420,400);
-			this.WebBrowserExcel.TabIndex=0;
-			this.WebBrowserExcel.Navigated+=new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.OnWebBrowserExcelNavigated);
-			// 
-			// OpenExcelFileDialog
-			// 
-			this.OpenExcelFileDialog.FileName="\"* Excel files | *.xls\"";
-			// 
-			// ExcelWrapper
-			// 
-			this.AutoScaleDimensions=new System.Drawing.SizeF(6F,13F);
-			this.AutoScaleMode=System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.WebBrowserExcel);
-			this.Name="ExcelWrapper";
-			this.Size=new System.Drawing.Size(420,400);
-			this.ResumeLayout(false);
+            this.WebBrowserExcel = new System.Windows.Forms.WebBrowser();
+            this.SuspendLayout();
+            // 
+            // WebBrowserExcel
+            // 
+            this.WebBrowserExcel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.WebBrowserExcel.Location = new System.Drawing.Point(0, 0);
+            this.WebBrowserExcel.Margin = new System.Windows.Forms.Padding(4);
+            this.WebBrowserExcel.MinimumSize = new System.Drawing.Size(27, 25);
+            this.WebBrowserExcel.Name = "WebBrowserExcel";
+            this.WebBrowserExcel.Size = new System.Drawing.Size(560, 492);
+            this.WebBrowserExcel.TabIndex = 0;
+            this.WebBrowserExcel.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.OnWebBrowserExcelNavigated);
+            // 
+            // ExcelWrapper
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.WebBrowserExcel);
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Name = "ExcelWrapper";
+            this.Size = new System.Drawing.Size(560, 492);
+            this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.WebBrowser WebBrowserExcel;
-		private System.Windows.Forms.OpenFileDialog OpenExcelFileDialog;
-	}
+        private System.Windows.Forms.WebBrowser WebBrowserExcel;
+
+    }
 }
