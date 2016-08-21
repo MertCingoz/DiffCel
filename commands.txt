@@ -1,0 +1,2 @@
+git log --pretty=oneline --abbrev-commit TestWorkbook.xlsx >raw.txt
+git diff 8818f2d TestWorkbook.xlsx >raw2.txt

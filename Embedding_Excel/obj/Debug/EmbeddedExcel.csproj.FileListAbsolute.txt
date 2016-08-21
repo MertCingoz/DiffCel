@@ -1,0 +1,11 @@
+C:\Users\Cngz\Desktop\Embedding_Excel_demo\bin\Debug\EmbeddedExcel.exe
+C:\Users\Cngz\Desktop\Embedding_Excel_demo\bin\Debug\EmbeddedExcel.pdb
+C:\Users\Cngz\Desktop\Embedding_Excel_demo\bin\Debug\Interop.VBIDE.dll
+C:\Users\Cngz\Desktop\Embedding_Excel_demo\obj\Debug\Interop.VBIDE.dll
+C:\Users\Cngz\Desktop\Embedding_Excel_demo\obj\Debug\EmbeddedExcel.csproj.ResolveComReference.cache
+C:\Users\Cngz\Desktop\Embedding_Excel_demo\obj\Debug\EmbeddedExcel.ExcelWrapper.resources
+C:\Users\Cngz\Desktop\Embedding_Excel_demo\obj\Debug\EmbeddedExcel.Form1.resources
+C:\Users\Cngz\Desktop\Embedding_Excel_demo\obj\Debug\EmbeddedExcel.Properties.Resources.resources
+C:\Users\Cngz\Desktop\Embedding_Excel_demo\obj\Debug\EmbeddedExcel.csproj.GenerateResource.Cache
+C:\Users\Cngz\Desktop\Embedding_Excel_demo\obj\Debug\EmbeddedExcel.exe
+C:\Users\Cngz\Desktop\Embedding_Excel_demo\obj\Debug\EmbeddedExcel.pdb
