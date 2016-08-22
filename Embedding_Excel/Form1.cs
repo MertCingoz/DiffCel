@@ -30,6 +30,7 @@ namespace EmbeddedExcel
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            gitFolder.ShowNewFolderButton = false;
             gitFolder.ShowDialog();
             if (Directory.Exists(gitFolder.SelectedPath + "\\.git"))
             {
