@@ -28,7 +28,6 @@ namespace EmbeddedExcel
 		private Microsoft.Office.Interop.Excel.Application m_XlApplication=null;
 		/// <summary>Contains a reference to the active workbook.</summary>
 		private Workbook m_Workbook=null;
-		private bool m_ToolBarVisible=true;
 		/// <summary>Contains the path to the workbook file.</summary>
 		private string m_ExcelFileName=string.Empty;
 	#endregion Fields
