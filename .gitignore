@@ -3,6 +3,7 @@
 
 # Build results
 [Oo]bj/
+[Bb]in/
 
 # User-specific files
 *.suo

@@ -16,8 +16,9 @@ namespace EmbeddedExcel
     {
         public static List<Cell> cells;
         private static string[] excelFormats = { "xlsx", ".xlsm", ".xlsb", ".xltx", ".xltm", ".xls", ".xlt", ".xml", ".xlam", ".xlw" };
+        private FolderBrowserDialog gitFolder = new FolderBrowserDialog();
         private Process cmd = new Process();
-        private string path;
+        private string relativePath;
         private string extension;
         private bool select = true;
         private string lastCommit="";
@@ -29,8 +30,14 @@ namespace EmbeddedExcel
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            ListDirectory(treeView1, AppDomain.CurrentDomain.BaseDirectory);
-            cells = new List<Cell>();
+            gitFolder.ShowDialog();
+            if (Directory.Exists(gitFolder.SelectedPath + "\\.git"))
+            {
+                ListDirectory(treeView1, gitFolder.SelectedPath);
+                cells = new List<Cell>();
+            }
+            else
+                Application.Exit();
         }
 
         private void ListDirectory(TreeView treeView, string path)
@@ -59,14 +66,14 @@ namespace EmbeddedExcel
         {
             if (e.Node.Nodes.Count == 0)
             {
-                path = "";
+                relativePath = "";
                 TreeNode temp = e.Node;
                 while (temp.Parent != null)
                 {
-                    path = "\\" + temp.Text + path;
+                    relativePath = "\\" + temp.Text + relativePath;
                     temp = temp.Parent;
                 }
-                path = path.Substring(1, path.Length - 1);
+                relativePath = relativePath.Substring(1, relativePath.Length - 1);
 
                 cmd.StartInfo.FileName = "cmd.exe";
                 cmd.StartInfo.RedirectStandardInput = true;
@@ -74,12 +81,15 @@ namespace EmbeddedExcel
                 cmd.StartInfo.CreateNoWindow = true;
                 cmd.StartInfo.UseShellExecute = false;
                 cmd.Start();
-                cmd.StandardInput.WriteLine("git log --pretty=format:\"%h|%an|%s\" \"" + path + "\" >commits.txt");
+                cmd.StandardInput.WriteLine("cd " + gitFolder.SelectedPath);
+                cmd.StandardInput.WriteLine("git log --pretty=format:\"%h|%an|%s\" \""+ relativePath + "\" >commits.txt");
                 cmd.StandardInput.Close();
                 cmd.WaitForExit();
 
                 listView1.Items.Clear();
-                string[] lines = System.IO.File.ReadAllLines(@"commits.txt");
+                string[] lines = System.IO.File.ReadAllLines(gitFolder.SelectedPath + "\\commits.txt");
+                if (File.Exists(gitFolder.SelectedPath + "\\commits.txt"))
+                    File.Delete(gitFolder.SelectedPath + "\\commits.txt");
                 foreach (string line in lines)
                 {
                     string[] objects = line.Split('|');
@@ -112,11 +122,12 @@ namespace EmbeddedExcel
                     foreach (var file in files)
                         File.Delete(file);
 
-                    string dir = path.Substring(0, path.LastIndexOf("\\") + 1);
-                    extension = path.Substring(path.LastIndexOf("."));
+                    string dir = relativePath.Substring(0, relativePath.LastIndexOf("\\") + 1);
+                    extension = relativePath.Substring(relativePath.LastIndexOf("."));
                     cmd.Start();
-                    cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " \"" + path + "\" >diff.txt");
-                    cmd.StandardInput.WriteLine("git cat-file -p " + e.Item.SubItems[0].Text + ":\"" + path.Replace('\\', '/') + "\" > Temp" + extension);
+                    cmd.StandardInput.WriteLine("cd " + gitFolder.SelectedPath);
+                    cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " \"" + gitFolder.SelectedPath + "\\" + relativePath + "\" >diff.txt");
+                    cmd.StandardInput.WriteLine("git cat-file -p " + e.Item.SubItems[0].Text + ":\"" + relativePath.Replace('\\', '/') + "\" > Temp" + extension);
                     cmd.StandardInput.Close();
                     cmd.WaitForExit();
                     GetDiff();
@@ -132,7 +143,9 @@ namespace EmbeddedExcel
 
         private void GetDiff()
         {
-            string raw = System.IO.File.ReadAllText(@"diff.txt");
+            string raw = System.IO.File.ReadAllText(gitFolder.SelectedPath + "\\diff.txt");
+            if (File.Exists(gitFolder.SelectedPath + "\\diff.txt"))
+                File.Delete(gitFolder.SelectedPath + "\\diff.txt");
             if (raw.Length == 0) return;
             raw = raw.Substring(0, raw.IndexOf("----------------- DIFF -------------------") - 1);
             string[] lines = raw.Split('\n');
@@ -179,7 +192,7 @@ namespace EmbeddedExcel
             if (select)
             {
                 Cursor.Current = Cursors.WaitCursor;
-                excelWrapper.OpenFile(AppDomain.CurrentDomain.BaseDirectory + "Temp" + extension, cells[e.ItemIndex]);
+                excelWrapper.OpenFile(gitFolder.SelectedPath + "\\Temp" + extension, cells[e.ItemIndex]);
                 select = false;
             }
             else
