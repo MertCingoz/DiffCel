@@ -9,6 +9,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using Microsoft.Win32;
 
 namespace EmbeddedExcel
 {
@@ -30,8 +31,22 @@ namespace EmbeddedExcel
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            RegistryKey key = Registry.LocalMachine;
+            key.CreateSubKey("SOFTWARE");
+            key = key.OpenSubKey("SOFTWARE", true);
+            key.CreateSubKey("Otomatica");
+            key = key.OpenSubKey("Otomatica", true);
+            key.CreateSubKey("DiffCell");
+            key = key.OpenSubKey("DiffCell", true);
+            gitFolder.SelectedPath = "----------";
+            foreach (var keyVal in key.GetValueNames())
+                if (keyVal == "Path")
+                    gitFolder.SelectedPath = key.GetValue(keyVal).ToString();
+            
             gitFolder.ShowNewFolderButton = false;
-            gitFolder.ShowDialog();
+            if (!Directory.Exists(gitFolder.SelectedPath + "\\.git"))
+                gitFolder.ShowDialog();
+
             if (Directory.Exists(gitFolder.SelectedPath + "\\.git"))
             {
                 ListDirectory(treeView1, gitFolder.SelectedPath);
@@ -43,10 +58,23 @@ namespace EmbeddedExcel
 
         private void ListDirectory(TreeView treeView, string path)
         {
+            RegistryKey key = Registry.LocalMachine;
+            key.CreateSubKey("SOFTWARE");
+            key = key.OpenSubKey("SOFTWARE", true);
+            key.CreateSubKey("Otomatica");
+            key = key.OpenSubKey("Otomatica", true);
+            key.CreateSubKey("DiffCell");
+            key = key.OpenSubKey("DiffCell", true);
+            key.SetValue("Path", path);
+
             treeView.Nodes.Clear();
             var rootDirectoryInfo = new DirectoryInfo(path);
-            treeView.Nodes.Add(CreateDirectoryNode(rootDirectoryInfo));
-            treeView.ExpandAll();
+            TreeNode root = new TreeNode("Select Git Folder");
+            TreeNode repo = CreateDirectoryNode(rootDirectoryInfo);
+            if (repo != null) root.Nodes.Add(repo);
+            treeView.Nodes.Add(root);
+            if (treeView.Nodes[0].Nodes.Count == 0) treeView.Nodes[0].Nodes.Add("No file");
+            treeView.SelectedNode = treeView.Nodes[0].Nodes[0];
         }
 
         private static TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
@@ -69,7 +97,7 @@ namespace EmbeddedExcel
             {
                 relativePath = "";
                 TreeNode temp = e.Node;
-                while (temp.Parent != null)
+                while (temp.Parent.Parent != null)
                 {
                     relativePath = "\\" + temp.Text + relativePath;
                     temp = temp.Parent;
@@ -91,13 +119,26 @@ namespace EmbeddedExcel
                 string[] lines = System.IO.File.ReadAllLines(gitFolder.SelectedPath + "\\commits.txt");
                 if (File.Exists(gitFolder.SelectedPath + "\\commits.txt"))
                     File.Delete(gitFolder.SelectedPath + "\\commits.txt");
-                foreach (string line in lines)
+
+                for(int i=0; i<lines.Length-1; i++)
                 {
-                    string[] objects = line.Split('|');
-                    listView1.Items.Add(objects[0]);
-                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(objects[1]);
-                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(objects[2]);
+                    string[] item = lines[i].Split('|');
+                    string[] nextItem = lines[i+1].Split('|');
+                    listView1.Items.Add(nextItem[0]);
+                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(item[1]);
+                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(item[2]);
                 }
+            }
+            else if(e.Node.Parent==null)
+            {
+                gitFolder.ShowDialog();
+                if (Directory.Exists(gitFolder.SelectedPath + "\\.git"))
+                {
+                    ListDirectory(treeView1, gitFolder.SelectedPath);
+                    cells = new List<Cell>();
+                }
+                else
+                    Application.Exit();
             }
         }
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
