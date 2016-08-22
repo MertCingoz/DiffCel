@@ -3,8 +3,15 @@
 
 # Excel Compare
 *.xlsx 	 diff=excel
-*.xls    diff=excel
+*.xlsm	 diff=excel
+*.xlsb	 diff=excel
+*.xltx 	 diff=excel
+*.xltm   diff=excel
+*.xls	 diff=excel
 *.xlt 	 diff=excel
+*.xml    diff=excel
+*.xlam	 diff=excel
+*.xlw	 diff=excel
 
 # Standard to msysgit
 *.doc	 diff=astextplain

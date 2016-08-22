@@ -52,7 +52,8 @@ namespace EmbeddedExcel
 
         private void OnWebBrowserExcelNavigated(object sender, WebBrowserNavigatedEventArgs e)
         {
-            AttachApplication();
+            if (e.Url.ToString()!="about:blank")
+                AttachApplication();
         }
 
         #endregion Events
@@ -130,35 +131,6 @@ namespace EmbeddedExcel
         }
         #endregion Methods
 
-        internal void Close()
-        {
-            try
-            {
-                // Quit Excel and clean up.
-                if (m_Workbook != null)
-                {
-                    m_Workbook.Save();
-                    m_Workbook.Close(true, Missing.Value, Missing.Value);
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject
-                                            (m_Workbook);
-                    m_Workbook = null;
-                }
-                if (m_XlApplication != null)
-                {
-                    m_XlApplication.Quit();
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject
-                                        (m_XlApplication);
-                    m_XlApplication = null;
-                    System.GC.Collect();
-                }
-                WebBrowserExcel.Navigate("");
-            }
-            catch
-            {
-                MessageBox.Show("Failed to close the application");
-            }
-        }
-
         private void GetDiff()
         {
             List<string> sheets = new List<string>();
@@ -193,6 +165,12 @@ namespace EmbeddedExcel
             m_Workbook.Worksheets[sheets.IndexOf(focusedCell.Sheet) + 1].Select();
             m_Workbook.Worksheets[sheets.IndexOf(focusedCell.Sheet) + 1].Range[focusedCell.Adress].Select();
             this.Visible = true;
+        }
+
+        internal void FocusCell(Cell cell)
+        {
+            m_Workbook.Worksheets[cell.Sheet].Select();
+            m_Workbook.Worksheets[cell.Sheet].Range[cell.Adress].Select();
         }
     }
 }

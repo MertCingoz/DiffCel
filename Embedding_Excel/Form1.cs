@@ -19,6 +19,8 @@ namespace EmbeddedExcel
         private Process cmd = new Process();
         private string path;
         private string extension;
+        private bool select = true;
+        private string lastCommit="";
 
         public Form1()
         {
@@ -27,7 +29,6 @@ namespace EmbeddedExcel
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            excelWrapper.Close();
             ListDirectory(treeView1, AppDomain.CurrentDomain.BaseDirectory);
             cells = new List<Cell>();
         }
@@ -73,12 +74,12 @@ namespace EmbeddedExcel
                 cmd.StartInfo.CreateNoWindow = true;
                 cmd.StartInfo.UseShellExecute = false;
                 cmd.Start();
-                cmd.StandardInput.WriteLine("git log --pretty=format:\"%h|%an|%s\" \"" + path + "\" >raw.txt");
+                cmd.StandardInput.WriteLine("git log --pretty=format:\"%h|%an|%s\" \"" + path + "\" >commits.txt");
                 cmd.StandardInput.Close();
                 cmd.WaitForExit();
 
                 listView1.Items.Clear();
-                string[] lines = System.IO.File.ReadAllLines(@"raw.txt");
+                string[] lines = System.IO.File.ReadAllLines(@"commits.txt");
                 foreach (string line in lines)
                 {
                     string[] objects = line.Split('|');
@@ -86,38 +87,41 @@ namespace EmbeddedExcel
                     listView1.Items[listView1.Items.Count - 1].SubItems.Add(objects[1]);
                     listView1.Items[listView1.Items.Count - 1].SubItems.Add(objects[2]);
                 }
-                excelWrapper.Close();
             }
         }
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            if (e.IsSelected)
+            if (e.IsSelected && e.Item.SubItems[0].Text!=lastCommit)
             {
+                listView2.Items.Clear();
+                Cursor.Current = Cursors.WaitCursor;
                 try
                 {
-                    var excelProcesses = Process.GetProcessesByName("excel");
-                    foreach (var process in excelProcesses)
-                        if (process.MainWindowTitle == "" && DialogResult.Yes == MessageBox.Show("Excel application being used by another process.\nEnsure that your local works are SAVED.\n\nDo you want to terminate EXCEL processes ?", "Opps", MessageBoxButtons.YesNoCancel))
-                        {
+                    excelWrapper.Dispose();
+                    excelWrapper = new EmbeddedExcel.ExcelWrapper();
+                    splitContainer1.Panel2.Controls.Add(this.excelWrapper);
+                    excelWrapper.Dock = System.Windows.Forms.DockStyle.Fill;
+                    excelWrapper.Location = new System.Drawing.Point(0, 0);
+                    excelWrapper.Margin = new System.Windows.Forms.Padding(5);
+                    excelWrapper.Name = "excelWrapper";
+                    excelWrapper.Size = new System.Drawing.Size(599, 608);
+                    excelWrapper.TabIndex = 7;
+                    excelWrapper.Visible = false;
 
-                            process.Kill();
-                            Cursor.Current = Cursors.WaitCursor;
-                            process.WaitForExit();
-                        }
-                    
                     string[] files = System.IO.Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "Temp*", System.IO.SearchOption.TopDirectoryOnly);
                     foreach (var file in files)
                         File.Delete(file);
+
                     string dir = path.Substring(0, path.LastIndexOf("\\") + 1);
                     extension = path.Substring(path.LastIndexOf("."));
                     cmd.Start();
-                    cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " \"" + path + "\" >raw2.txt");
+                    cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " \"" + path + "\" >diff.txt");
                     cmd.StandardInput.WriteLine("git cat-file -p " + e.Item.SubItems[0].Text + ":\"" + path.Replace('\\', '/') + "\" > Temp" + extension);
                     cmd.StandardInput.Close();
                     cmd.WaitForExit();
-                    listView2.Items.Clear();
-                    excelWrapper.Visible = false;
                     GetDiff();
+                    select = true;
+                    lastCommit = e.Item.SubItems[0].Text;
                 }
                 catch (Exception ex)
                 {
@@ -128,7 +132,7 @@ namespace EmbeddedExcel
 
         private void GetDiff()
         {
-            string raw = System.IO.File.ReadAllText(@"raw2.txt");
+            string raw = System.IO.File.ReadAllText(@"diff.txt");
             if (raw.Length == 0) return;
             raw = raw.Substring(0, raw.IndexOf("----------------- DIFF -------------------") - 1);
             string[] lines = raw.Split('\n');
@@ -160,21 +164,33 @@ namespace EmbeddedExcel
                 listView2.Items[listView2.Items.Count - 1].SubItems.Add(cell.Adress);
                 listView2.Items[listView2.Items.Count - 1].SubItems.Add(cell.OldValue);
                 listView2.Items[listView2.Items.Count - 1].SubItems.Add(cell.NewValue);
+                if(cell.Operation=="Added")
+                    listView2.Items[listView2.Items.Count - 1].ForeColor=Color.Green;
+                else if (cell.Operation == "Deleted")
+                    listView2.Items[listView2.Items.Count - 1].ForeColor = Color.Red;
+                else if (cell.Operation == "Changed")
+                    listView2.Items[listView2.Items.Count - 1].ForeColor = Color.Orange;
             }
         }
 
         
         private void listView2_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            Thread thread = new Thread(() => excelWrapper.OpenFile(AppDomain.CurrentDomain.BaseDirectory + "Temp" + extension, cells[e.ItemIndex]));
-            thread.Start();
+            if (select)
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                excelWrapper.OpenFile(AppDomain.CurrentDomain.BaseDirectory + "Temp" + extension, cells[e.ItemIndex]);
+                select = false;
+            }
+            else
+                excelWrapper.FocusCell(cells[e.ItemIndex]);
         }
 
         private void listView_MouseMove(object sender, MouseEventArgs e)
         {
             ListView lv = (ListView)sender;
             var hit = lv.HitTest(e.Location);
-            if (hit.SubItem != null && hit.SubItem == hit.Item.SubItems[0])
+            if (hit.SubItem != null)
                 lv.Cursor = Cursors.Hand;
             else
                 lv.Cursor = Cursors.Default;
