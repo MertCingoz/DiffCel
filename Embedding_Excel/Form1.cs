@@ -14,6 +14,7 @@ namespace EmbeddedExcel
 	{
         Process cmd = new Process();
         string path;
+        Form2 frm;
 
 		public Form1() {
 			InitializeComponent();
@@ -78,24 +79,30 @@ namespace EmbeddedExcel
                 
             }
         }
-
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             if (e.IsSelected)
             {
+                string[] files = System.IO.Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "Temp*", System.IO.SearchOption.TopDirectoryOnly);
+                foreach (var file in files)
+                    File.Delete(file);
                 string dir = path.Substring(0, path.LastIndexOf("\\")+1);
                 string extension = path.Substring(path.LastIndexOf("."));
                 cmd.Start();
                 cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " \"" + path + "\" >raw2.txt");
-                cmd.StandardInput.WriteLine("git show " + e.Item.SubItems[0].Text + "\"" + path + "\" > Temp"+extension+ "\"");
+                cmd.StandardInput.WriteLine("git cat-file -p " + e.Item.SubItems[0].Text + ":\"" + path.Replace('\\','/') + "\" > Temp"+extension);
                 cmd.StandardInput.Close();
                 cmd.WaitForExit();
                 textBox1.Text = System.IO.File.ReadAllText(@"raw2.txt");
-                excelWrapper1.OpenFile(AppDomain.CurrentDomain.BaseDirectory +"Temp"+extension);
+                
+                if (frm!=null && !frm.IsDisposed)
+                    frm.Dispose();
+                frm = new Form2(AppDomain.CurrentDomain.BaseDirectory + "Temp" + extension);
+                frm.Owner = this;
+                frm.Show();
+                frm.Focus();
+                this.Hide();
             }
         }
-
-
-
 	}
 }

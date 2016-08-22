@@ -22,13 +22,13 @@ namespace EmbeddedExcel
 		static extern int CreateBindCtx(uint reserved,out IBindCtx pctx);
 
 	#region Fields
+        private string[] lines = null;
 		private readonly Missing MISS=Missing.Value;
 		/// <summary>Contains a reference to the hosting application.</summary>
 		private Microsoft.Office.Interop.Excel.Application m_XlApplication=null;
 		/// <summary>Contains a reference to the active workbook.</summary>
 		private Workbook m_Workbook=null;
 		private bool m_ToolBarVisible=true;
-		private Office.CommandBar m_StandardCommandBar=null;
 		/// <summary>Contains the path to the workbook file.</summary>
 		private string m_ExcelFileName=string.Empty;
 	#endregion Fields
@@ -44,42 +44,19 @@ namespace EmbeddedExcel
 		public Workbook Workbook {
 			get { return m_Workbook; }
 		}
-
-		[Browsable(true),Category("Appearance")]
-		public bool ToolBarVisible {
-			get { return m_ToolBarVisible; }
-			set {
-				if(m_ToolBarVisible==value) return;
-				m_ToolBarVisible=value;
-				if(m_XlApplication!=null) OnToolBarVisibleChanged();
-			}
-		}
 	#endregion Properties
 
 	#region Events
-		private void OnToolBarVisibleChanged() {
-			try {
-				m_StandardCommandBar.Visible=m_ToolBarVisible;
-			} catch { }
-		}
 
 		private void OnWebBrowserExcelNavigated(object sender,WebBrowserNavigatedEventArgs e) {
 			AttachApplication();
 		}
 
-		//private void OnOpenClick(Office.CommandBarButton Ctrl,ref bool Cancel) {
-		//    if(this.OpenExcelFileDialog.ShowDialog()==DialogResult.OK) {
-		//        OpenFile(OpenExcelFileDialog.FileName);
-		//    }
-		//}
-
-		//void OnNewClick(Office.CommandBarButton Ctrl,ref bool Cancel) {
-		//    throw new Exception("The method or operation is not implemented.");
-		//}
 	#endregion Events
 
 	#region Methods
-		public void OpenFile(string filename) {
+		public void OpenFile(string filename,string [] _lines) {
+            lines = _lines;
 			// Check the file exists
 			if(!System.IO.File.Exists(filename)) throw new Exception();
 			m_ExcelFileName=filename.Replace("\\","/");
@@ -127,39 +104,98 @@ namespace EmbeddedExcel
 				if(m_ExcelFileName==null||m_ExcelFileName.Length==0) return;
 				// Creation of the workbook object
 				if((m_Workbook=GetActiveWorkbook(m_ExcelFileName))==null)return;
+                GetDiff();
 				// Create the Excel.Application object
 				m_XlApplication=(Microsoft.Office.Interop.Excel.Application)m_Workbook.Application;
-				// Creation of the standard toolbar
-				m_StandardCommandBar=m_XlApplication.CommandBars["Standard"];
-				m_StandardCommandBar.Position=Office.MsoBarPosition.msoBarTop;
-				m_StandardCommandBar.Visible=m_ToolBarVisible;
-				// Enable the OpenFile and New buttons
-				foreach(Office.CommandBarControl control in m_StandardCommandBar.Controls) {
-					string name = control.get_accName(Missing.Value);
-					if(name.Equals("Nouveau")) ((Office.CommandBarButton)control).Enabled=false;
-					if(name.Equals("Ouvrir")) ((Office.CommandBarButton)control).Enabled=false;
-				}
-			} catch {
-				MessageBox.Show("Impossible de charger le fichier Excel");
+			} catch(Exception ex) {
+				MessageBox.Show(ex.Message);
 				return;
 			}
 		}
-
+        
 		public Worksheet FindExcelWorksheet(string sheetname) {
-			if(m_Workbook.Sheets==null) return null;
+            if (m_Workbook.Worksheets == null) return null;
 			Worksheet sheet=null;
 			// Step through the worksheet collection and see if the sheet is available. If found return true;
-			for(int isheet=1; isheet<=m_Workbook.Sheets.Count; isheet++) {
-				sheet=(Worksheet)m_Workbook.Sheets.get_Item((object)isheet);
-				if(sheet.Name.Equals(sheetname)) { sheet.Activate(); return sheet; }
+            for (int isheet = 1; isheet <= m_Workbook.Worksheets.Count; isheet++)
+            {
+                sheet = (Worksheet)m_Workbook.Worksheets.get_Item((object)isheet);
+                if (sheet.Name.Equals(sheetname)) { return sheet; }
 			}
 			return null;
 		}
 	#endregion Methods
 
+        internal void Close()
+        {
+            try
+            {
+                // Quit Excel and clean up.
+                if (m_Workbook != null)
+                {
+                    m_Workbook.Close(true, Missing.Value, Missing.Value);
+                    System.Runtime.InteropServices.Marshal.ReleaseComObject
+                                            (m_Workbook);
+                    m_Workbook = null;
+                }
+                if (m_XlApplication != null)
+                {
+                    m_XlApplication.Quit();
+                    System.Runtime.InteropServices.Marshal.ReleaseComObject
+                                        (m_XlApplication);
+                    m_XlApplication = null;
+                    System.GC.Collect();
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Failed to close the application");
+            }
+        }
 
 
+        private void GetDiff()
+        {
+            
+            
+            foreach (var line in lines)
+            {
+                if (line.Length > 20)
+                {
+                    string _old = "";
+                    string _new = "";
+                    string sheet = line.Substring(18, line.IndexOf("!", 18) - 18);
+                    string range = line.Substring(line.IndexOf("!", 18) + 1, line.IndexOf(" ", 18) - line.IndexOf("!", 18) -1);
 
+                    Worksheet wSheet = FindExcelWorksheet(sheet);
+                    if (wSheet == null)
+                    {
+                        wSheet = m_Workbook.Worksheets.Add(Type.Missing, m_Workbook.Worksheets[m_Workbook.Worksheets.Count]);
+                        wSheet.Name = sheet;
+                    }
+                    
+                    if (line.Substring(14, 3) == "   ")
+                    {
+                        _old = line.Substring(32, line.IndexOf("' v/s '") - 32);
+                        _new = line.Substring(line.IndexOf("' v/s '") + 7, line.Length - line.IndexOf("' v/s '") - 9);
+                        wSheet.Range[range].AddComment("Changed Old Value : " + _old);
+                        wSheet.Range[range].Value2 = _new;
+                    }
+                    else if (line.Substring(14, 3) == "WB1")
+                    {
+                        _old = line.Substring(32, line.Length - 34);
+                        wSheet.Range[range].AddComment("Deleted Value : " + _old);
+                        wSheet.Range[range].Value2 = "";
+                    }
+                    else if (line.Substring(14, 3) == "WB2")
+                    {
+                        _new = line.Substring(32, line.Length - 34);
+                        wSheet.Range[range].AddComment("Added");
+                        wSheet.Range[range].Value2=_new;
+                    }
+                }
+            }
+        }
 
     }
 }
