@@ -1,3 +1,0 @@
-git log --pretty=format:"%h|%an|%s" "Excel Files\\Kitap1.xls" >commits.txt
-git diff f17e6cf "Excel Files\\Kitap1.xls" >diff.txt
-git cat-file -p f17e6cf "Excel Files\\Kitap1.xls" > Temp.extension
