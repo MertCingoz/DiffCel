@@ -4,6 +4,7 @@
 # Build results
 [Oo]bj/
 [Bb]in/
+[Tt]emp/
 
 # User-specific files
 *.suo

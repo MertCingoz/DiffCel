@@ -96,6 +96,7 @@ namespace EmbeddedExcel
                 {
                     excelWrapper.Dispose();
                     excelWrapper = new EmbeddedExcel.ExcelWrapper();
+                    excelWrapper.Visible = false;
                     splitContainer1.Panel2.Controls.Add(this.excelWrapper);
                     excelWrapper.Dock = System.Windows.Forms.DockStyle.Fill;
                     excelWrapper.Location = new System.Drawing.Point(0, 0);
@@ -103,7 +104,6 @@ namespace EmbeddedExcel
                     excelWrapper.Name = "excelWrapper";
                     excelWrapper.Size = new System.Drawing.Size(599, 608);
                     excelWrapper.TabIndex = 7;
-                    excelWrapper.Visible = false;
 
                     string[] files = System.IO.Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "Temp*", System.IO.SearchOption.TopDirectoryOnly);
                     foreach (var file in files)
@@ -114,7 +114,7 @@ namespace EmbeddedExcel
                     cmd.Start();
                     cmd.StandardInput.WriteLine("cd " + gitFolder.SelectedPath);
                     cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " \"" + gitFolder.SelectedPath + "\\" + relativePath + "\" >diff.txt");
-                    cmd.StandardInput.WriteLine("git cat-file -p " + e.Item.SubItems[0].Text + ":\"" + relativePath.Replace('\\', '/') + "\" > Temp" + extension);
+                    cmd.StandardInput.WriteLine("git cat-file -p " + e.Item.SubItems[0].Text + ":\"" + relativePath.Replace('\\', '/') + "\" > Temp\\Temp" + extension);
                     cmd.StandardInput.Close();
                     cmd.WaitForExit();
                     GetDiff();
@@ -179,7 +179,7 @@ namespace EmbeddedExcel
             if (select)
             {
                 Cursor.Current = Cursors.WaitCursor;
-                excelWrapper.OpenFile(gitFolder.SelectedPath + "\\Temp" + extension, cells[e.ItemIndex]);
+                excelWrapper.OpenFile(gitFolder.SelectedPath + "\\Temp\\Temp" + extension, cells[e.ItemIndex]);
                 select = false;
             }
             else
@@ -198,7 +198,7 @@ namespace EmbeddedExcel
 
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (e.Node.Nodes.Count == 0)
+            if (e.Node.Nodes.Count == 0 && e.Node.Text != "No file found")
             {
                 relativePath = "";
                 TreeNode temp = e.Node;
