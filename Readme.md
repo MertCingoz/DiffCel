@@ -9,6 +9,6 @@
 3-Run regedit.reg
 
 4-Used commands for git:
-  git log --pretty=format:"%h|%an|%s" "Excel Files\\Kitap1.xls" >commits.txt
-  git diff e22abd5 "Excel Files\\Kitap1.xls" >diff.txt
-  git cat-file -p e22abd5 "Excel Files\\Kitap1.xls" > Temp.extension
+  git log --pretty=format:"%h|%an|%s" "Excel Files\Kitap1.xls" >commits.txt
+  git diff e22abd5 "Excel Files\Kitap1.xls" >diff.txt
+  git cat-file -p e22abd5 "Excel Files\Kitap1.xls" > Temp\Temp.extension

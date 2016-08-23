@@ -1,0 +1,18 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Excel.Sheet.8]
+"BrowserFlags"=dword:80000A00
+"EditFlags"=hex:00,00,01,00
+ 
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Excel.Sheet.12]
+"BrowserFlags"=dword:80000A00
+"EditFlags"=hex:00,00,01,00
+ 
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Excel.SheetMacroEnabled.12]
+"BrowserFlags"=dword:80000A00
+"EditFlags"=hex:00,00,01,00
+ 
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Excel.SheetBinaryMacroEnabled.12]
+"BrowserFlags"=dword:80000A00
+"EditFlags"=hex:00,00,01,00
+ 

@@ -11,7 +11,6 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
 
-
 namespace EmbeddedExcel
 {
     public partial class ExcelWrapper : UserControl
@@ -90,6 +89,7 @@ namespace EmbeddedExcel
                     // Clean up
                     Marshal.ReleaseComObject(pctx);
                     // Search for the workbook
+                    filepathname=filepathname.Replace("\\", "/");
                     if (filepathname.IndexOf(xlfile) != -1)
                     {
                         object roval;
@@ -111,6 +111,7 @@ namespace EmbeddedExcel
             }
             return null;
         }
+        Office.CommandBars cmdBars;
 
         private void AttachApplication()
         {
@@ -122,6 +123,7 @@ namespace EmbeddedExcel
                 GetDiff();
                 // Create the Excel.Application object
                 m_XlApplication = (Microsoft.Office.Interop.Excel.Application)m_Workbook.Application;
+                cmdBars = m_XlApplication.CommandBars;
             }
             catch (Exception ex)
             {
@@ -129,7 +131,6 @@ namespace EmbeddedExcel
                 return;
             }
         }
-        #endregion Methods
 
         private void GetDiff()
         {
@@ -164,7 +165,6 @@ namespace EmbeddedExcel
             }
             m_Workbook.Worksheets[sheets.IndexOf(focusedCell.Sheet) + 1].Select();
             m_Workbook.Worksheets[sheets.IndexOf(focusedCell.Sheet) + 1].Range[focusedCell.Adress].Select();
-            this.Visible = true;
         }
 
         internal void FocusCell(Cell cell)
@@ -172,6 +172,9 @@ namespace EmbeddedExcel
             m_Workbook.Worksheets[cell.Sheet].Select();
             m_Workbook.Worksheets[cell.Sheet].Range[cell.Adress].Select();
         }
+        #endregion Methods
+
+
     }
 }
 

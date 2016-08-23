@@ -114,7 +114,7 @@ namespace EmbeddedExcel
                     cmd.Start();
                     cmd.StandardInput.WriteLine("cd " + gitFolder.SelectedPath);
                     cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " \"" + gitFolder.SelectedPath + "\\" + relativePath + "\" >diff.txt");
-                    cmd.StandardInput.WriteLine("git cat-file -p " + e.Item.SubItems[0].Text + ":\"" + relativePath.Replace('\\', '/') + "\" > Temp\\Temp" + extension);
+                    cmd.StandardInput.WriteLine("git cat-file -p " + e.Item.SubItems[0].Text + ":\"" + relativePath.Replace('\\', '/') + "\" > Temp/Temp" + extension);
                     cmd.StandardInput.Close();
                     cmd.WaitForExit();
                     GetDiff();
@@ -181,6 +181,7 @@ namespace EmbeddedExcel
                 Cursor.Current = Cursors.WaitCursor;
                 excelWrapper.OpenFile(gitFolder.SelectedPath + "\\Temp\\Temp" + extension, cells[e.ItemIndex]);
                 select = false;
+                excelWrapper.Visible = true;
             }
             else
                 excelWrapper.FocusCell(cells[e.ItemIndex]);
@@ -247,7 +248,5 @@ namespace EmbeddedExcel
                 }
             }
         }
-
-
     }
 }
