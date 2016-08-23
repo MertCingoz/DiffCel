@@ -56,6 +56,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -65,14 +66,16 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.excelWrapper);
-            this.splitContainer1.Size = new System.Drawing.Size(1156, 608);
-            this.splitContainer1.SplitterDistance = 553;
+            this.splitContainer1.Size = new System.Drawing.Size(874, 509);
+            this.splitContainer1.SplitterDistance = 549;
+            this.splitContainer1.SplitterWidth = 3;
             this.splitContainer1.TabIndex = 5;
             // 
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -83,14 +86,16 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.listView2);
-            this.splitContainer2.Size = new System.Drawing.Size(553, 608);
-            this.splitContainer2.SplitterDistance = 210;
+            this.splitContainer2.Size = new System.Drawing.Size(549, 509);
+            this.splitContainer2.SplitterDistance = 175;
+            this.splitContainer2.SplitterWidth = 3;
             this.splitContainer2.TabIndex = 0;
             // 
             // splitContainer3
             // 
             this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.splitContainer3.Name = "splitContainer3";
             // 
             // splitContainer3.Panel1
@@ -100,8 +105,9 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.listView1);
-            this.splitContainer3.Size = new System.Drawing.Size(553, 210);
-            this.splitContainer3.SplitterDistance = 198;
+            this.splitContainer3.Size = new System.Drawing.Size(549, 175);
+            this.splitContainer3.SplitterDistance = 196;
+            this.splitContainer3.SplitterWidth = 3;
             this.splitContainer3.TabIndex = 2;
             // 
             // treeView1
@@ -109,8 +115,9 @@
             this.treeView1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(198, 210);
+            this.treeView1.Size = new System.Drawing.Size(196, 175);
             this.treeView1.TabIndex = 1;
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             // 
@@ -124,8 +131,9 @@
             this.listView1.FullRowSelect = true;
             this.listView1.GridLines = true;
             this.listView1.Location = new System.Drawing.Point(0, 0);
+            this.listView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(351, 210);
+            this.listView1.Size = new System.Drawing.Size(350, 175);
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -159,8 +167,9 @@
             this.listView2.FullRowSelect = true;
             this.listView2.GridLines = true;
             this.listView2.Location = new System.Drawing.Point(0, 0);
+            this.listView2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listView2.Name = "listView2";
-            this.listView2.Size = new System.Drawing.Size(553, 394);
+            this.listView2.Size = new System.Drawing.Size(549, 331);
             this.listView2.TabIndex = 4;
             this.listView2.UseCompatibleStateImageBehavior = false;
             this.listView2.View = System.Windows.Forms.View.Details;
@@ -196,20 +205,19 @@
             // 
             this.excelWrapper.Dock = System.Windows.Forms.DockStyle.Fill;
             this.excelWrapper.Location = new System.Drawing.Point(0, 0);
-            this.excelWrapper.Margin = new System.Windows.Forms.Padding(5);
+            this.excelWrapper.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.excelWrapper.Name = "excelWrapper";
-            this.excelWrapper.Size = new System.Drawing.Size(599, 608);
+            this.excelWrapper.Size = new System.Drawing.Size(322, 509);
             this.excelWrapper.TabIndex = 7;
             this.excelWrapper.Visible = false;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1156, 608);
+            this.ClientSize = new System.Drawing.Size(874, 509);
             this.Controls.Add(this.splitContainer1);
-            this.Margin = new System.Windows.Forms.Padding(4);
-            this.MinimumSize = new System.Drawing.Size(1174, 653);
+            this.MinimumSize = new System.Drawing.Size(882, 536);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";

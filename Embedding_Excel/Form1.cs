@@ -225,11 +225,10 @@ namespace EmbeddedExcel
                 if (File.Exists(gitFolder.SelectedPath + "\\commits.txt"))
                     File.Delete(gitFolder.SelectedPath + "\\commits.txt");
 
-                for (int i = 0; i < lines.Length - 1; i++)
+                for (int i = 0; i < lines.Length; i++)
                 {
                     string[] item = lines[i].Split('|');
-                    string[] nextItem = lines[i + 1].Split('|');
-                    listView1.Items.Add(nextItem[0]);
+                    listView1.Items.Add(item[0]);
                     listView1.Items[listView1.Items.Count - 1].SubItems.Add(item[1]);
                     listView1.Items[listView1.Items.Count - 1].SubItems.Add(item[2]);
                 }
