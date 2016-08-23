@@ -19,6 +19,7 @@ namespace EmbeddedExcel
         private static string[] excelFormats = { "xlsx", ".xlsm", ".xlsb", ".xltx", ".xltm", ".xls", ".xlt", ".xml", ".xlam", ".xlw" };
         private FolderBrowserDialog gitFolder = new FolderBrowserDialog();
         private Process cmd = new Process();
+        private RegistryKey key = Registry.LocalMachine;
         private string relativePath;
         private string extension;
         private bool select = true;
@@ -31,46 +32,43 @@ namespace EmbeddedExcel
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            RegistryKey key = Registry.LocalMachine;
+            
             key.CreateSubKey("SOFTWARE");
             key = key.OpenSubKey("SOFTWARE", true);
             key.CreateSubKey("Otomatica");
             key = key.OpenSubKey("Otomatica", true);
             key.CreateSubKey("DiffCell");
             key = key.OpenSubKey("DiffCell", true);
-            gitFolder.SelectedPath = "----------";
+            gitFolder.SelectedPath = "Empty";
             foreach (var keyVal in key.GetValueNames())
                 if (keyVal == "Path")
                     gitFolder.SelectedPath = key.GetValue(keyVal).ToString();
             
             gitFolder.ShowNewFolderButton = false;
-            if (!Directory.Exists(gitFolder.SelectedPath + "\\.git"))
+            if (gitFolder.SelectedPath=="Empty")
                 gitFolder.ShowDialog();
 
-            if (Directory.Exists(gitFolder.SelectedPath + "\\.git"))
-                ListDirectory(treeView1, gitFolder.SelectedPath);
-            else
-                Application.Exit();
+            ListDirectory(treeView1, gitFolder.SelectedPath);
         }
 
         private void ListDirectory(TreeView treeView, string path)
         {
-            RegistryKey key = Registry.LocalMachine;
-            key.CreateSubKey("SOFTWARE");
-            key = key.OpenSubKey("SOFTWARE", true);
-            key.CreateSubKey("Otomatica");
-            key = key.OpenSubKey("Otomatica", true);
-            key.CreateSubKey("DiffCell");
-            key = key.OpenSubKey("DiffCell", true);
             key.SetValue("Path", path);
-
             treeView.Nodes.Clear();
             var rootDirectoryInfo = new DirectoryInfo(path);
             TreeNode root = new TreeNode("Select Git Folder");
-            TreeNode repo = CreateDirectoryNode(rootDirectoryInfo);
+            TreeNode repo = null;
+            try
+            {
+                repo = CreateDirectoryNode(rootDirectoryInfo);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             if (repo != null) root.Nodes.Add(repo);
             treeView.Nodes.Add(root);
-            if (treeView.Nodes[0].Nodes.Count == 0) treeView.Nodes[0].Nodes.Add("No file");
+            if (treeView.Nodes[0].Nodes.Count == 0) treeView.Nodes[0].Nodes.Add("No file found");
             treeView.SelectedNode = treeView.Nodes[0].Nodes[0];
         }
 
@@ -88,53 +86,6 @@ namespace EmbeddedExcel
             return directoryNode;
         }
 
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            if (e.Node.Nodes.Count == 0)
-            {
-                relativePath = "";
-                TreeNode temp = e.Node;
-                while (temp.Parent.Parent != null)
-                {
-                    relativePath = "\\" + temp.Text + relativePath;
-                    temp = temp.Parent;
-                }
-                relativePath = relativePath.Substring(1, relativePath.Length - 1);
-
-                cmd.StartInfo.FileName = "cmd.exe";
-                cmd.StartInfo.RedirectStandardInput = true;
-                cmd.StartInfo.RedirectStandardOutput = true;
-                cmd.StartInfo.CreateNoWindow = true;
-                cmd.StartInfo.UseShellExecute = false;
-                cmd.Start();
-                cmd.StandardInput.WriteLine("cd " + gitFolder.SelectedPath);
-                cmd.StandardInput.WriteLine("git log --pretty=format:\"%h|%an|%s\" \""+ relativePath + "\" >commits.txt");
-                cmd.StandardInput.Close();
-                cmd.WaitForExit();
-
-                listView1.Items.Clear();
-                string[] lines = System.IO.File.ReadAllLines(gitFolder.SelectedPath + "\\commits.txt");
-                if (File.Exists(gitFolder.SelectedPath + "\\commits.txt"))
-                    File.Delete(gitFolder.SelectedPath + "\\commits.txt");
-
-                for(int i=0; i<lines.Length-1; i++)
-                {
-                    string[] item = lines[i].Split('|');
-                    string[] nextItem = lines[i+1].Split('|');
-                    listView1.Items.Add(nextItem[0]);
-                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(item[1]);
-                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(item[2]);
-                }
-            }
-            else if(e.Node.Parent==null)
-            {
-                gitFolder.ShowDialog();
-                if (Directory.Exists(gitFolder.SelectedPath + "\\.git"))
-                    ListDirectory(treeView1, gitFolder.SelectedPath);
-                else
-                    Application.Exit();
-            }
-        }
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             if (e.IsSelected && e.Item.SubItems[0].Text!=lastCommit)
@@ -243,6 +194,59 @@ namespace EmbeddedExcel
                 lv.Cursor = Cursors.Hand;
             else
                 lv.Cursor = Cursors.Default;
+        }
+
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Node.Nodes.Count == 0)
+            {
+                relativePath = "";
+                TreeNode temp = e.Node;
+                while (temp.Parent.Parent != null)
+                {
+                    relativePath = "\\" + temp.Text + relativePath;
+                    temp = temp.Parent;
+                }
+                relativePath = relativePath.Substring(1, relativePath.Length - 1);
+
+                cmd.StartInfo.FileName = "cmd.exe";
+                cmd.StartInfo.RedirectStandardInput = true;
+                cmd.StartInfo.RedirectStandardOutput = true;
+                cmd.StartInfo.CreateNoWindow = true;
+                cmd.StartInfo.UseShellExecute = false;
+                cmd.Start();
+                cmd.StandardInput.WriteLine("cd " + gitFolder.SelectedPath);
+                cmd.StandardInput.WriteLine("git log --pretty=format:\"%h|%an|%s\" \"" + relativePath + "\" >commits.txt");
+                cmd.StandardInput.Close();
+                cmd.WaitForExit();
+
+                listView1.Items.Clear();
+                string[] lines = System.IO.File.ReadAllLines(gitFolder.SelectedPath + "\\commits.txt");
+                if (File.Exists(gitFolder.SelectedPath + "\\commits.txt"))
+                    File.Delete(gitFolder.SelectedPath + "\\commits.txt");
+
+                for (int i = 0; i < lines.Length - 1; i++)
+                {
+                    string[] item = lines[i].Split('|');
+                    string[] nextItem = lines[i + 1].Split('|');
+                    listView1.Items.Add(nextItem[0]);
+                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(item[1]);
+                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(item[2]);
+                }
+            }
+            else if (e.Node.Parent == null)
+            {
+                string temp = gitFolder.SelectedPath;
+                gitFolder.ShowDialog();
+                if (temp != gitFolder.SelectedPath)
+                {
+                    ListDirectory(treeView1, gitFolder.SelectedPath);
+                    listView1.Items.Clear();
+                    listView2.Items.Clear();
+                    excelWrapper.Visible = false;
+                    lastCommit = "";
+                }
+            }
         }
 
 
