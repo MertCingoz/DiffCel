@@ -15,7 +15,7 @@ namespace EmbeddedExcel
 {
     public partial class Form1 : Form
     {
-        public static List<Cell> cells;
+        public static List<Cell> cells = new List<Cell>();
         private static string[] excelFormats = { "xlsx", ".xlsm", ".xlsb", ".xltx", ".xltm", ".xls", ".xlt", ".xml", ".xlam", ".xlw" };
         private FolderBrowserDialog gitFolder = new FolderBrowserDialog();
         private Process cmd = new Process();
@@ -48,10 +48,7 @@ namespace EmbeddedExcel
                 gitFolder.ShowDialog();
 
             if (Directory.Exists(gitFolder.SelectedPath + "\\.git"))
-            {
                 ListDirectory(treeView1, gitFolder.SelectedPath);
-                cells = new List<Cell>();
-            }
             else
                 Application.Exit();
         }
@@ -133,10 +130,7 @@ namespace EmbeddedExcel
             {
                 gitFolder.ShowDialog();
                 if (Directory.Exists(gitFolder.SelectedPath + "\\.git"))
-                {
                     ListDirectory(treeView1, gitFolder.SelectedPath);
-                    cells = new List<Cell>();
-                }
                 else
                     Application.Exit();
             }
