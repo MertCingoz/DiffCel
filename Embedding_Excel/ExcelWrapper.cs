@@ -121,7 +121,7 @@ namespace EmbeddedExcel
                 if (m_ExcelFileName == null || m_ExcelFileName.Length == 0) return;
                 // Creation of the workbook object
                 if ((m_Workbook = GetActiveWorkbook(m_ExcelFileName)) == null) return;
-                GetDiff();
+                //GetDiff();
                 // Create the Excel.Application object
                 m_XlApplication = m_Workbook.Application;
                 //CommandBar m_StandardCommandBar = m_XlApplication.CommandBars["Standart"];

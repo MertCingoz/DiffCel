@@ -114,7 +114,7 @@ namespace EmbeddedExcel
                     splitContainer4.Panel1.Controls.Add(excelWrapperOld);
                     splitContainer4.Panel2.Controls.Add(excelWrapperNew);
 
-                    string[] files = System.IO.Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "TempOld*", System.IO.SearchOption.TopDirectoryOnly);
+                    string[] files = System.IO.Directory.GetFiles(gitFolder.SelectedPath + "\\Temp", "Temp*", System.IO.SearchOption.TopDirectoryOnly);
                     foreach (var file in files)
                         File.Delete(file);
 
@@ -124,7 +124,7 @@ namespace EmbeddedExcel
                     cmd.StandardInput.WriteLine("cd " + gitFolder.SelectedPath);
                     cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " \"" + gitFolder.SelectedPath + "\\" + relativePath + "\" > Temp/diff.txt");
                     cmd.StandardInput.WriteLine("git cat-file -p " + e.Item.SubItems[0].Text + ":\"" + relativePath.Replace('\\', '/') + "\" > Temp/TempOld" + extension);
-                    if (e.ItemIndex-1>0)
+                    if (e.ItemIndex-1>=0)
                         cmd.StandardInput.WriteLine("git cat-file -p " + listView1.Items[e.ItemIndex -1].SubItems[0].Text + ":\"" + relativePath.Replace('\\', '/') + "\" > Temp/TempNew" + extension);
 
                     cmd.StandardInput.Close();
@@ -132,13 +132,9 @@ namespace EmbeddedExcel
 
                     listView2.BeginUpdate();
                     GetDiff();
-                    new Thread(() =>
-                    {
-                        excelWrapperOld.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempOld" + extension);
-                        if (e.ItemIndex - 1 > 0)
-                            excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempNew" + extension);
-
-                    }).Start();
+                    excelWrapperOld.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempOld" + extension);
+                    if (e.ItemIndex - 1 >= 0)
+                        excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempNew" + extension);
                     lastCommit = e.Item.SubItems[0].Text;
                     listView2.EndUpdate();
                 }
@@ -248,12 +244,16 @@ namespace EmbeddedExcel
                 if (File.Exists(gitFolder.SelectedPath + "\\Temp\\commits.txt"))
                     File.Delete(gitFolder.SelectedPath + "\\Temp\\commits.txt");
 
+                string author="";
+                string description="current";
                 for (int i = 0; i < lines.Length; i++)
                 {
                     string[] item = lines[i].Split('|');
                     listView1.Items.Add(item[0]);
-                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(item[1]);
-                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(item[2]);
+                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(author);
+                    listView1.Items[listView1.Items.Count - 1].SubItems.Add(description);
+                    author = item[1];
+                    description = item[2];
                 }
             }
             else if (e.Node.Parent == null)
