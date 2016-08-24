@@ -7,8 +7,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using Microsoft.Win32;
 
 namespace EmbeddedExcel
@@ -76,8 +74,9 @@ namespace EmbeddedExcel
                 if (CreateDirectoryNode(directory) != null)
                     directoryNode.Nodes.Add(CreateDirectoryNode(directory));
             foreach (var file in directoryInfo.GetFiles())
-                if (excelFormats.Any(file.Name.Contains) && !file.Name.Contains("Temp"))
-                    directoryNode.Nodes.Add(new TreeNode(file.Name));
+                foreach(var item in excelFormats)
+                    if(file.Name.Contains(item) && !file.Name.Contains("Temp"))
+                        directoryNode.Nodes.Add(new TreeNode(file.Name));
             if (directoryNode.Nodes.Count == 0)
                 return null;
             return directoryNode;

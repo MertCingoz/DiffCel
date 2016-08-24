@@ -48,12 +48,12 @@ namespace EmbeddedExcel
 
         #region Events
 
-        private void OnWebBrowserExcelNavigated(object sender, WebBrowserNavigatedEventArgs e)
+        private void WebBrowserExcel_NavigateComplete2(object sender, AxSHDocVw.DWebBrowserEvents2_NavigateComplete2Event e)
         {
-                AttachApplication();
+            AttachApplication();
         }
 
-        private void WebBrowserExcel_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        private void WebBrowserExcel_DocumentComplete(object sender, AxSHDocVw.DWebBrowserEvents2_DocumentCompleteEvent e)
         {
             this.Visible = true;
         }
@@ -66,7 +66,9 @@ namespace EmbeddedExcel
             if (!System.IO.File.Exists(filename)) throw new Exception();
             m_ExcelFileName = filename.Replace("\\", "/");
             // Load the workbook in the WebBrowser control
-            WebBrowserExcel.Navigate(filename, false);
+            object missing = "";
+            object url = filename;
+            WebBrowserExcel.Navigate2(ref url, ref missing, ref missing, ref missing, ref missing);
         }
 
         public Workbook GetActiveWorkbook(string xlfile)
@@ -123,9 +125,6 @@ namespace EmbeddedExcel
                 //GetDiff();
                 // Create the Excel.Application object
                 m_XlApplication = m_Workbook.Application;
-                //CommandBar m_StandardCommandBar = m_XlApplication.CommandBars["Standart"];
-                //m_StandardCommandBar.Position = MsoBarPosition.msoBarTop;
-                //m_StandardCommandBar.Visible = true;
             }
             catch (Exception ex)
             {
@@ -156,16 +155,15 @@ namespace EmbeddedExcel
         {
             try
             {
-                //m_Workbook.Worksheets[cell.Sheet].Activate();
                 m_Workbook.Worksheets[cell.Sheet].Select();
                 m_Workbook.Worksheets[cell.Sheet].Range[cell.Adress].Select();
             }
-            catch
+            catch(Exception ex)
             {
-                
             }
         }
         #endregion Methods
+
 
     }
 }
