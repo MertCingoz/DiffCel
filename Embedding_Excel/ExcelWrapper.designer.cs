@@ -13,7 +13,7 @@
 			}
 			//this.WebBrowserExcel.Dispose();
 			try {
-				// Quit Excel and clean up.
+                m_Workbook.Save();
 				if(m_Workbook!=null) {
 					m_Workbook.Close(true,MISS,MISS);
 					System.Runtime.InteropServices.Marshal.ReleaseComObject(m_Workbook);
