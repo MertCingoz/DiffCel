@@ -50,7 +50,6 @@ namespace EmbeddedExcel
 
         private void OnWebBrowserExcelNavigated(object sender, WebBrowserNavigatedEventArgs e)
         {
-            if (e.Url.ToString().Contains("Temp"))
                 AttachApplication();
         }
 
@@ -157,7 +156,7 @@ namespace EmbeddedExcel
         {
             try
             {
-                m_Workbook.Worksheets[cell.Sheet].Activate();
+                //m_Workbook.Worksheets[cell.Sheet].Activate();
                 m_Workbook.Worksheets[cell.Sheet].Select();
                 m_Workbook.Worksheets[cell.Sheet].Range[cell.Adress].Select();
             }

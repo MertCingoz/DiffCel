@@ -133,7 +133,9 @@ namespace EmbeddedExcel
                     listView2.BeginUpdate();
                     GetDiff();
                     excelWrapperOld.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempOld" + extension);
-                    if (e.ItemIndex - 1 >= 0)
+                    if(e.ItemIndex==0)
+                        excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\" + relativePath);
+                    else if (e.ItemIndex - 1 >= 0)
                         excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempNew" + extension);
                     lastCommit = e.Item.SubItems[0].Text;
                     listView2.EndUpdate();
@@ -163,19 +165,19 @@ namespace EmbeddedExcel
                     cell.Adress = line.Substring(line.IndexOf("!", 18) + 1, line.IndexOf(" ", 18) - line.IndexOf("!", 18) - 1);
                     if (line.Substring(14, 3) == "   ")
                     {
-                        cell.OldValue = line.Substring(32, line.IndexOf("' v/s '") - 32);
+                        cell.OldValue = line.Substring(line.IndexOf("=>") + 4, line.IndexOf("' v/s '") - line.IndexOf("=>") + 4);
                         cell.NewValue = line.Substring(line.IndexOf("' v/s '") + 7, line.Length - line.IndexOf("' v/s '") - 9);
-                        cell.Operation = "Changed";
+                        cell.Operation = "Change";
                     }
                     else if (line.Substring(14, 3) == "WB1")
                     {
-                        cell.OldValue = line.Substring(32, line.Length - 34);
-                        cell.Operation = "Deleted";
+                        cell.OldValue = line.Substring(line.IndexOf("=>") + 4, line.Length - line.IndexOf("=>") - 6);
+                        cell.Operation = "Delete";
                     }
                     else if (line.Substring(14, 3) == "WB2")
                     {
-                        cell.NewValue = line.Substring(32, line.Length - 34);
-                        cell.Operation = "Added";
+                        cell.NewValue = line.Substring(line.IndexOf("=>") + 4, line.Length - line.IndexOf("=>") - 6);
+                        cell.Operation = "Add";
                     }
                     cells.Add(cell);
                     listView2.Items.Add(cell.Operation);
@@ -183,11 +185,11 @@ namespace EmbeddedExcel
                     listView2.Items[listView2.Items.Count - 1].SubItems.Add(cell.Adress);
                     listView2.Items[listView2.Items.Count - 1].SubItems.Add(cell.OldValue);
                     listView2.Items[listView2.Items.Count - 1].SubItems.Add(cell.NewValue);
-                    if (cell.Operation == "Added")
+                    if (cell.Operation == "Add")
                         listView2.Items[listView2.Items.Count - 1].ForeColor = Color.Green;
-                    else if (cell.Operation == "Deleted")
+                    else if (cell.Operation == "Delete")
                         listView2.Items[listView2.Items.Count - 1].ForeColor = Color.Red;
-                    else if (cell.Operation == "Changed")
+                    else if (cell.Operation == "Change")
                         listView2.Items[listView2.Items.Count - 1].ForeColor = Color.Orange;
                 }
             }
