@@ -118,7 +118,10 @@ namespace EmbeddedExcel
                     extension = relativePath.Substring(relativePath.LastIndexOf("."));
                     cmd.Start();
                     cmd.StandardInput.WriteLine("cd " + gitFolder.SelectedPath);
-                    cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " \"" + gitFolder.SelectedPath + "\\" + relativePath + "\" > Temp/diff.txt");
+                    if (e.ItemIndex - 1 >= 0)
+                        cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " " + listView1.Items[e.ItemIndex - 1].SubItems[0].Text + " \"" + gitFolder.SelectedPath + "\\" + relativePath + "\" > Temp/diff.txt");
+                    else
+                        cmd.StandardInput.WriteLine("git diff " + e.Item.SubItems[0].Text + " \"" + gitFolder.SelectedPath + "\\" + relativePath + "\" > Temp/diff.txt");
                     cmd.StandardInput.WriteLine("git cat-file -p " + e.Item.SubItems[0].Text + ":\"" + relativePath.Replace('\\', '/') + "\" > Temp/TempOld" + extension);
                     if (e.ItemIndex-1>=0)
                         cmd.StandardInput.WriteLine("git cat-file -p " + listView1.Items[e.ItemIndex -1].SubItems[0].Text + ":\"" + relativePath.Replace('\\', '/') + "\" > Temp/TempNew" + extension);
@@ -162,7 +165,7 @@ namespace EmbeddedExcel
                     cell.Adress = line.Substring(line.IndexOf("!", 18) + 1, line.IndexOf(" ", 18) - line.IndexOf("!", 18) - 1);
                     if (line.Substring(14, 3) == "   ")
                     {
-                        cell.OldValue = line.Substring(line.IndexOf("=>") + 4, line.IndexOf("' v/s '") - line.IndexOf("=>") + 4);
+                        cell.OldValue = line.Substring(line.IndexOf("=>") + 4, line.IndexOf("' v/s '") - line.IndexOf("=>") - 4);
                         cell.NewValue = line.Substring(line.IndexOf("' v/s '") + 7, line.Length - line.IndexOf("' v/s '") - 9);
                         cell.Operation = "Change";
                     }
