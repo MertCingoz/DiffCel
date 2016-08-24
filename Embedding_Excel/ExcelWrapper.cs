@@ -5,11 +5,11 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using Office = Microsoft.Office.Core;
-using Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
+using Microsoft.Office.Interop.Excel;
+using Microsoft.Office.Core;
 
 namespace EmbeddedExcel
 {
@@ -22,7 +22,6 @@ namespace EmbeddedExcel
         static extern int CreateBindCtx(uint reserved, out IBindCtx pctx);
 
         #region Fields
-        private Cell focusedCell = null;
         private readonly Missing MISS = Missing.Value;
         /// <summary>Contains a reference to the hosting application.</summary>
         private Microsoft.Office.Interop.Excel.Application m_XlApplication = null;
@@ -51,16 +50,19 @@ namespace EmbeddedExcel
 
         private void OnWebBrowserExcelNavigated(object sender, WebBrowserNavigatedEventArgs e)
         {
-            if (e.Url.ToString()!="about:blank")
+            if (e.Url.ToString().Contains("Temp"))
                 AttachApplication();
         }
 
+        private void WebBrowserExcel_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            this.Visible = true;
+        }
         #endregion Events
 
         #region Methods
-        public void OpenFile(string filename, Cell _focusedCell)
+        public void OpenFile(string filename)
         {
-            focusedCell = _focusedCell;
             // Check the file exists
             if (!System.IO.File.Exists(filename)) throw new Exception();
             m_ExcelFileName = filename.Replace("\\", "/");
@@ -111,7 +113,6 @@ namespace EmbeddedExcel
             }
             return null;
         }
-        Office.CommandBars cmdBars;
 
         private void AttachApplication()
         {
@@ -122,13 +123,14 @@ namespace EmbeddedExcel
                 if ((m_Workbook = GetActiveWorkbook(m_ExcelFileName)) == null) return;
                 GetDiff();
                 // Create the Excel.Application object
-                m_XlApplication = (Microsoft.Office.Interop.Excel.Application)m_Workbook.Application;
-                cmdBars = m_XlApplication.CommandBars;
+                m_XlApplication = m_Workbook.Application;
+                //CommandBar m_StandardCommandBar = m_XlApplication.CommandBars["Standart"];
+                //m_StandardCommandBar.Position = MsoBarPosition.msoBarTop;
+                //m_StandardCommandBar.Visible = true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                return;
             }
         }
 
@@ -147,33 +149,24 @@ namespace EmbeddedExcel
             foreach (Cell cell in Form1.cells)
             {
                 int index = sheets.IndexOf(cell.Sheet) + 1;
-                if (cell.Operation == "Changed")
-                {
-                    m_Workbook.Worksheets[index].Range[cell.Adress].AddComment("Changed Old Value : " + cell.OldValue);
-                    m_Workbook.Worksheets[index].Range[cell.Adress].Value2 = cell.NewValue;
-                }
-                else if (cell.Operation == "Deleted")
-                {
-                    m_Workbook.Worksheets[index].Range[cell.Adress].AddComment("Deleted Value : " + cell.OldValue);
-                    m_Workbook.Worksheets[index].Range[cell.Adress].Value2 = "";
-                }
-                else if (cell.Operation == "Added")
-                {
-                    m_Workbook.Worksheets[index].Range[cell.Adress].AddComment("Added");
-                    m_Workbook.Worksheets[index].Range[cell.Adress].Value2 = cell.NewValue;
-                }
+                m_Workbook.Worksheets[index].Range[cell.Adress].AddComment("");
             }
-            m_Workbook.Worksheets[sheets.IndexOf(focusedCell.Sheet) + 1].Select();
-            m_Workbook.Worksheets[sheets.IndexOf(focusedCell.Sheet) + 1].Range[focusedCell.Adress].Select();
         }
 
         internal void FocusCell(Cell cell)
         {
-            m_Workbook.Worksheets[cell.Sheet].Select();
-            m_Workbook.Worksheets[cell.Sheet].Range[cell.Adress].Select();
+            try
+            {
+                m_Workbook.Worksheets[cell.Sheet].Activate();
+                m_Workbook.Worksheets[cell.Sheet].Select();
+                m_Workbook.Worksheets[cell.Sheet].Range[cell.Adress].Select();
+            }
+            catch
+            {
+                
+            }
         }
         #endregion Methods
-
 
     }
 }

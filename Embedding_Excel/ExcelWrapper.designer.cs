@@ -50,6 +50,7 @@
             this.WebBrowserExcel.Name = "WebBrowserExcel";
             this.WebBrowserExcel.Size = new System.Drawing.Size(560, 492);
             this.WebBrowserExcel.TabIndex = 0;
+            this.WebBrowserExcel.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.WebBrowserExcel_DocumentCompleted);
             this.WebBrowserExcel.Navigated += new System.Windows.Forms.WebBrowserNavigatedEventHandler(this.OnWebBrowserExcelNavigated);
             // 
             // ExcelWrapper
