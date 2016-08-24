@@ -37,9 +37,9 @@
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
             this.EditLink = new System.Windows.Forms.LinkLabel();
-            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.excelWrapperOld = new EmbeddedExcel.ExcelWrapper();
             this.excelWrapperNew = new EmbeddedExcel.ExcelWrapper();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -54,14 +54,14 @@
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
-            this.splitContainer5.Panel1.SuspendLayout();
-            this.splitContainer5.Panel2.SuspendLayout();
-            this.splitContainer5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
+            this.splitContainer5.Panel1.SuspendLayout();
+            this.splitContainer5.Panel2.SuspendLayout();
+            this.splitContainer5.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -78,7 +78,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer5);
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer4);
             this.splitContainer1.Size = new System.Drawing.Size(1200, 626);
             this.splitContainer1.SplitterDistance = 555;
             this.splitContainer1.TabIndex = 5;
@@ -211,6 +211,23 @@
             this.columnHeader9.Text = "New Value";
             this.columnHeader9.Width = 173;
             // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.excelWrapperOld);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.splitContainer5);
+            this.splitContainer4.Size = new System.Drawing.Size(641, 626);
+            this.splitContainer4.SplitterDistance = 318;
+            this.splitContainer4.TabIndex = 13;
+            // 
             // splitContainer5
             // 
             this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -228,42 +245,25 @@
             // 
             // splitContainer5.Panel2
             // 
-            this.splitContainer5.Panel2.Controls.Add(this.splitContainer4);
+            this.splitContainer5.Panel2.Controls.Add(this.excelWrapperNew);
             this.splitContainer5.Panel2MinSize = 10;
-            this.splitContainer5.Size = new System.Drawing.Size(641, 626);
-            this.splitContainer5.SplitterDistance = 25;
+            this.splitContainer5.Size = new System.Drawing.Size(319, 626);
+            this.splitContainer5.SplitterDistance = 17;
             this.splitContainer5.SplitterIncrement = 5;
             this.splitContainer5.SplitterWidth = 5;
-            this.splitContainer5.TabIndex = 10;
+            this.splitContainer5.TabIndex = 11;
             // 
             // EditLink
             // 
             this.EditLink.Dock = System.Windows.Forms.DockStyle.Fill;
             this.EditLink.Location = new System.Drawing.Point(0, 0);
             this.EditLink.Name = "EditLink";
-            this.EditLink.Size = new System.Drawing.Size(641, 25);
+            this.EditLink.Size = new System.Drawing.Size(319, 17);
             this.EditLink.TabIndex = 12;
             this.EditLink.TabStop = true;
             this.EditLink.Text = "Edit Current Version";
             this.EditLink.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.EditLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.EditLink_LinkClicked);
-            // 
-            // splitContainer4
-            // 
-            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer4.Name = "splitContainer4";
-            // 
-            // splitContainer4.Panel1
-            // 
-            this.splitContainer4.Panel1.Controls.Add(this.excelWrapperOld);
-            // 
-            // splitContainer4.Panel2
-            // 
-            this.splitContainer4.Panel2.Controls.Add(this.excelWrapperNew);
-            this.splitContainer4.Size = new System.Drawing.Size(641, 626);
-            this.splitContainer4.SplitterDistance = 318;
-            this.splitContainer4.TabIndex = 11;
             // 
             // excelWrapperOld
             // 
@@ -309,14 +309,14 @@
             this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
-            this.splitContainer5.Panel1.ResumeLayout(false);
-            this.splitContainer5.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
-            this.splitContainer5.ResumeLayout(false);
             this.splitContainer4.Panel1.ResumeLayout(false);
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
+            this.splitContainer5.Panel1.ResumeLayout(false);
+            this.splitContainer5.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
+            this.splitContainer5.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -337,11 +337,11 @@
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.ColumnHeader columnHeader8;
         private System.Windows.Forms.ColumnHeader columnHeader9;
-        private System.Windows.Forms.SplitContainer splitContainer5;
-        private System.Windows.Forms.LinkLabel EditLink;
-        private System.Windows.Forms.SplitContainer splitContainer4;
         private ExcelWrapper excelWrapperOld;
         private ExcelWrapper excelWrapperNew;
+        private System.Windows.Forms.SplitContainer splitContainer4;
+        private System.Windows.Forms.SplitContainer splitContainer5;
+        private System.Windows.Forms.LinkLabel EditLink;
 
     }
 }

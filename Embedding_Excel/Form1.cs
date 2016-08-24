@@ -112,7 +112,7 @@ namespace EmbeddedExcel
                     excelWrapperNew.Visible = false;
 
                     splitContainer4.Panel1.Controls.Add(excelWrapperOld);
-                    splitContainer4.Panel2.Controls.Add(excelWrapperNew);
+                    splitContainer5.Panel2.Controls.Add(excelWrapperNew);
 
                     string dir = relativePath.Substring(0, relativePath.LastIndexOf("\\") + 1);
                     extension = relativePath.Substring(relativePath.LastIndexOf("."));
