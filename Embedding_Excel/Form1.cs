@@ -86,6 +86,7 @@ namespace EmbeddedExcel
         {
             if (e.IsSelected && e.Item.SubItems[0].Text!=lastCommit)
             {
+                splitContainer5.Panel1Collapsed = true;
                 listView2.Items.Clear();
                 Cursor.Current = Cursors.WaitCursor;
                 try
@@ -96,7 +97,7 @@ namespace EmbeddedExcel
                     excelWrapperOld.Location = new System.Drawing.Point(0, 0);
                     excelWrapperOld.Margin = new System.Windows.Forms.Padding(5);
                     excelWrapperOld.Name = "excelWrapperOld";
-                    excelWrapperOld.Size = new System.Drawing.Size(318, 626);
+                    excelWrapperOld.Size = new System.Drawing.Size(318, 597);
                     excelWrapperOld.TabIndex = 9;
                     excelWrapperOld.Visible = false;
 
@@ -106,16 +107,12 @@ namespace EmbeddedExcel
                     excelWrapperNew.Location = new System.Drawing.Point(0, 0);
                     excelWrapperNew.Margin = new System.Windows.Forms.Padding(5);
                     excelWrapperNew.Name = "excelWrapperNew";
-                    excelWrapperNew.Size = new System.Drawing.Size(319, 626);
+                    excelWrapperNew.Size = new System.Drawing.Size(319, 597);
                     excelWrapperNew.TabIndex = 10;
                     excelWrapperNew.Visible = false;
 
                     splitContainer4.Panel1.Controls.Add(excelWrapperOld);
                     splitContainer4.Panel2.Controls.Add(excelWrapperNew);
-
-                    string[] files = System.IO.Directory.GetFiles(gitFolder.SelectedPath + "\\Temp", "Temp*", System.IO.SearchOption.TopDirectoryOnly);
-                    foreach (var file in files)
-                        File.Delete(file);
 
                     string dir = relativePath.Substring(0, relativePath.LastIndexOf("\\") + 1);
                     extension = relativePath.Substring(relativePath.LastIndexOf("."));
@@ -131,11 +128,14 @@ namespace EmbeddedExcel
 
                     listView2.BeginUpdate();
                     GetDiff();
-                    excelWrapperOld.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempOld" + extension);
-                    if(e.ItemIndex==0)
-                        excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\" + relativePath);
+                    excelWrapperOld.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempOld" + extension,false);
+                    if (e.ItemIndex == 0)
+                        splitContainer5.Panel1Collapsed = false;
+                    
+                    if (e.ItemIndex == 0 && listView2.Items.Count != 0)
+                        excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\" + relativePath, false);
                     else if (e.ItemIndex - 1 >= 0)
-                        excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempNew" + extension);
+                        excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempNew" + extension,false);
                     lastCommit = e.Item.SubItems[0].Text;
                     listView2.EndUpdate();
                 }
@@ -152,8 +152,6 @@ namespace EmbeddedExcel
             {
                 cells.Clear();
                 string raw = System.IO.File.ReadAllText(gitFolder.SelectedPath + "\\Temp\\diff.txt");
-                if (File.Exists(gitFolder.SelectedPath + "\\Temp\\diff.txt"))
-                    File.Delete(gitFolder.SelectedPath + "\\Temp\\diff.txt");
                 if (raw.Length == 0) return;
                 raw = raw.Substring(0, raw.IndexOf("----------------- DIFF -------------------") - 1);
                 string[] lines = raw.Split('\n');
@@ -242,8 +240,6 @@ namespace EmbeddedExcel
 
                 listView1.Items.Clear();
                 string[] lines = System.IO.File.ReadAllLines(gitFolder.SelectedPath + "\\Temp\\commits.txt");
-                if (File.Exists(gitFolder.SelectedPath + "\\Temp\\commits.txt"))
-                    File.Delete(gitFolder.SelectedPath + "\\Temp\\commits.txt");
 
                 string author="";
                 string description="current";
@@ -271,6 +267,20 @@ namespace EmbeddedExcel
                     lastCommit = "";
                 }
             }
+        }
+
+        private void EditLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            excelWrapperNew.Dispose();
+            excelWrapperNew = new EmbeddedExcel.ExcelWrapper();
+            excelWrapperNew.Dock = System.Windows.Forms.DockStyle.Fill;
+            excelWrapperNew.Location = new System.Drawing.Point(0, 0);
+            excelWrapperNew.Margin = new System.Windows.Forms.Padding(5);
+            excelWrapperNew.Name = "excelWrapperNew";
+            excelWrapperNew.Size = new System.Drawing.Size(319, 597);
+            excelWrapperNew.TabIndex = 10;
+            excelWrapperNew.Visible = false;
+            excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\" + relativePath,true);
         }
     }
 }

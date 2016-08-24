@@ -48,27 +48,31 @@ namespace EmbeddedExcel
 
         #region Events
 
-        private void WebBrowserExcel_NavigateComplete2(object sender, AxSHDocVw.DWebBrowserEvents2_NavigateComplete2Event e)
+
+        private void webBrowser1_Navigated(object sender, WebBrowserNavigatedEventArgs e)
         {
             AttachApplication();
         }
 
-        private void WebBrowserExcel_DocumentComplete(object sender, AxSHDocVw.DWebBrowserEvents2_DocumentCompleteEvent e)
+        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             this.Visible = true;
         }
+
         #endregion Events
 
         #region Methods
-        public void OpenFile(string filename)
+        public void OpenFile(string filename,bool newWindow)
         {
             // Check the file exists
             if (!System.IO.File.Exists(filename)) throw new Exception();
             m_ExcelFileName = filename.Replace("\\", "/");
             // Load the workbook in the WebBrowser control
-            object missing = "";
-            object url = filename;
-            WebBrowserExcel.Navigate2(ref url, ref missing, ref missing, ref missing, ref missing);
+
+            AttachApplication();
+            if (m_XlApplication != null)
+                return;
+            WebBrowserExcel.Navigate(filename,newWindow);
         }
 
         public Workbook GetActiveWorkbook(string xlfile)
@@ -158,13 +162,11 @@ namespace EmbeddedExcel
                 m_Workbook.Worksheets[cell.Sheet].Select();
                 m_Workbook.Worksheets[cell.Sheet].Range[cell.Adress].Select();
             }
-            catch(Exception ex)
+            catch
             {
             }
         }
         #endregion Methods
-
-
     }
 }
 
