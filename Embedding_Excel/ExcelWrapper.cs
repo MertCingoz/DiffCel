@@ -15,7 +15,6 @@ namespace EmbeddedExcel
 {
     public partial class ExcelWrapper : UserControl
     {
-
         [DllImport("ole32.dll")]
         static extern int GetRunningObjectTable(uint reserved, out IRunningObjectTable pprot);
         [DllImport("ole32.dll")]
@@ -29,6 +28,7 @@ namespace EmbeddedExcel
         private Workbook m_Workbook = null;
         /// <summary>Contains the path to the workbook file.</summary>
         private string m_ExcelFileName = string.Empty;
+        private string m_path = string.Empty;
         #endregion Fields
 
         #region Construction
@@ -47,23 +47,21 @@ namespace EmbeddedExcel
         #endregion Properties
 
         #region Events
-
-
-        private void webBrowser1_Navigated(object sender, WebBrowserNavigatedEventArgs e)
-        {
-            AttachApplication();
-        }
-
-        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        private void WebBrowserExcel_DocumentComplete(object sender, AxSHDocVw.DWebBrowserEvents2_DocumentCompleteEvent e)
         {
             this.Visible = true;
         }
 
+        private void WebBrowserExcel_NavigateComplete2(object sender, AxSHDocVw.DWebBrowserEvents2_NavigateComplete2Event e)
+        {
+            AttachApplication();
+        }
         #endregion Events
 
         #region Methods
         public void OpenFile(string filename,bool newWindow)
         {
+            m_path = filename;
             // Check the file exists
             if (!System.IO.File.Exists(filename)) throw new Exception();
             m_ExcelFileName = filename.Replace("\\", "/");
@@ -72,7 +70,14 @@ namespace EmbeddedExcel
             AttachApplication();
             if (m_XlApplication != null)
                 return;
-            WebBrowserExcel.Navigate(filename,newWindow);
+
+            object miss = "";
+            object url = filename;
+            object target = "_self";
+            if (newWindow)
+                target = "_blank";
+            object flag = 32768;
+            WebBrowserExcel.Navigate2(ref url, ref flag, ref target, ref miss, ref miss);
         }
 
         public Workbook GetActiveWorkbook(string xlfile)
@@ -129,6 +134,7 @@ namespace EmbeddedExcel
                 //GetDiff();
                 // Create the Excel.Application object
                 m_XlApplication = m_Workbook.Application;
+                
             }
             catch (Exception ex)
             {
@@ -162,8 +168,9 @@ namespace EmbeddedExcel
                 m_Workbook.Worksheets[cell.Sheet].Select();
                 m_Workbook.Worksheets[cell.Sheet].Range[cell.Adress].Select();
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
         }
         #endregion Methods
