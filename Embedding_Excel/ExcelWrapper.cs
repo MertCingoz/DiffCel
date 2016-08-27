@@ -165,8 +165,14 @@ namespace EmbeddedExcel
         {
             try
             {
-                m_Workbook.Worksheets[cell.Sheet].Select();
-                m_Workbook.Worksheets[cell.Sheet].Range[cell.Adress].Select();
+                foreach(Worksheet ws in m_Workbook.Worksheets)
+                {
+                    if (ws.Name == cell.Sheet)
+                    {
+                        m_Workbook.Worksheets[cell.Sheet].Select();
+                        m_Workbook.Worksheets[cell.Sheet].Range[cell.Adress].Select();
+                    }
+                }
             }
             catch(Exception ex)
             {

@@ -23,6 +23,10 @@ namespace EmbeddedExcel
         private string extension;
         private string lastCommit="";
         private int lastCell=-1;
+        private string oldPath;
+        private string newPath;
+        private string selected;
+        TreeNode tempNode;
         #endregion Fields
 
         #region Construction
@@ -33,6 +37,8 @@ namespace EmbeddedExcel
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            splitContainer4.Panel1Collapsed = true;
+            splitContainer5.Panel2Collapsed = true;
             key.CreateSubKey("SOFTWARE");
             key = key.OpenSubKey("SOFTWARE", true);
             key.CreateSubKey("DiffCell");
@@ -55,34 +61,16 @@ namespace EmbeddedExcel
         {
             if (e.IsSelected && e.Item.SubItems[0].Text != lastCommit)
             {
-                splitContainer5.Panel1Collapsed = (e.ItemIndex != 0);
+                Clean();
+                oldLink.LinkVisited = false;
+                newLink.LinkVisited = false;
+                selected = "";
+                splitContainer4.Panel1Collapsed = false;
+                splitContainer5.Panel2Collapsed = true;
                 listView2.Items.Clear();
                 Cursor.Current = Cursors.WaitCursor;
                 try
                 {
-                    excelWrapperOld.Dispose();
-                    excelWrapperOld = new EmbeddedExcel.ExcelWrapper();
-                    excelWrapperOld.Dock = System.Windows.Forms.DockStyle.Fill;
-                    excelWrapperOld.Location = new System.Drawing.Point(0, 0);
-                    excelWrapperOld.Margin = new System.Windows.Forms.Padding(5);
-                    excelWrapperOld.Name = "excelWrapperOld";
-                    excelWrapperOld.Size = new System.Drawing.Size(318, 597);
-                    excelWrapperOld.TabIndex = 9;
-                    excelWrapperOld.Visible = false;
-
-                    excelWrapperNew.Dispose();
-                    excelWrapperNew = new EmbeddedExcel.ExcelWrapper();
-                    excelWrapperNew.Dock = System.Windows.Forms.DockStyle.Fill;
-                    excelWrapperNew.Location = new System.Drawing.Point(0, 0);
-                    excelWrapperNew.Margin = new System.Windows.Forms.Padding(5);
-                    excelWrapperNew.Name = "excelWrapperNew";
-                    excelWrapperNew.Size = new System.Drawing.Size(319, 597);
-                    excelWrapperNew.TabIndex = 10;
-                    excelWrapperNew.Visible = false;
-
-                    splitContainer4.Panel1.Controls.Add(excelWrapperOld);
-                    splitContainer5.Panel2.Controls.Add(excelWrapperNew);
-
                     string dir = relativePath.Substring(0, relativePath.LastIndexOf("\\") + 1);
                     extension = relativePath.Substring(relativePath.LastIndexOf("."));
                     cmd.Start();
@@ -101,27 +89,33 @@ namespace EmbeddedExcel
 
                     listView2.BeginUpdate();
                     GetDiff();
-                    excelWrapperOld.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempOld" + extension, false);
-                    if (e.ItemIndex == 0 )
-                        excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\" + relativePath, false);
-                    else 
-                        excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\Temp\\TempNew" + extension, false);
+
+                    oldPath = gitFolder.SelectedPath + "\\Temp\\TempOld" + extension;
+
+                    if (e.ItemIndex == 0)
+                        newPath = gitFolder.SelectedPath + "\\" + relativePath;
+                    else
+                        newPath = gitFolder.SelectedPath + "\\Temp\\TempNew" + extension;
                     lastCommit = e.Item.SubItems[0].Text;
                     listView2.EndUpdate();
+                    e.Item.ForeColor = Color.Red;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
             }
+            else
+            {
+                e.Item.ForeColor = Color.Black;
+            }
         }
 
         private void listView2_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            if (e.IsSelected && e.ItemIndex != lastCell)
+            if (e.IsSelected && e.ItemIndex != lastCell && excelWrapper.Visible)
             {
-                excelWrapperOld.FocusCell(cells[e.ItemIndex]);
-                excelWrapperNew.FocusCell(cells[e.ItemIndex]);
+                excelWrapper.FocusCell(cells[e.ItemIndex]);
                 lastCell = e.ItemIndex;
             }
         }
@@ -136,10 +130,14 @@ namespace EmbeddedExcel
                 lv.Cursor = Cursors.Default;
         }
 
-        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (e.Node.Nodes.Count == 0 && e.Node.Text != "No file found")
             {
+                Clean();
+                splitContainer4.Panel1Collapsed = true;
+                listView2.Items.Clear();
                 relativePath = "";
                 TreeNode temp = e.Node;
                 while (temp.Parent.Parent != null)
@@ -175,8 +173,14 @@ namespace EmbeddedExcel
                     listView1.Items[listView1.Items.Count - 1].SubItems.Add(date);
                     author = item[1];
                     description = item[2];
-                    date = item[3].Substring(0,item[3].Length-5);
+                    date = item[3].Substring(0, item[3].Length - 5);
                 }
+
+
+                if (tempNode != null)
+                    tempNode.ForeColor = Color.Black;
+                tempNode = e.Node;
+                tempNode.ForeColor = Color.Red;
             }
             else if (e.Node.Parent == null)
             {
@@ -187,32 +191,57 @@ namespace EmbeddedExcel
                     ListDirectory(treeView1, gitFolder.SelectedPath);
                     listView1.Items.Clear();
                     listView2.Items.Clear();
-                    excelWrapperOld.Visible = false;
-                    excelWrapperNew.Visible = false;
+                    excelWrapper.Visible = false;
                     lastCommit = "";
                 }
             }
         }
 
-        private void EditLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void openWithLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            excelWrapperOld.Dispose();
-            excelWrapperNew.Dispose();
-            excelWrapperNew = new EmbeddedExcel.ExcelWrapper();
-            excelWrapperNew.Dock = System.Windows.Forms.DockStyle.Fill;
-            excelWrapperNew.Location = new System.Drawing.Point(0, 0);
-            excelWrapperNew.Margin = new System.Windows.Forms.Padding(5);
-            excelWrapperNew.Name = "excelWrapperNew";
-            excelWrapperNew.Size = new System.Drawing.Size(319, 597);
-            excelWrapperNew.TabIndex = 10;
-            excelWrapperNew.Visible = false;
-            excelWrapperNew.OpenFile(gitFolder.SelectedPath + "\\" + relativePath, true);
+            Clean();
+            Process.Start(selected);
+            selected = "";
+            splitContainer5.Panel2Collapsed = true;
+            oldLink.LinkVisited = false;
+            newLink.LinkVisited = false;
+            openWithLink.LinkVisited = true;
         }
+
+        private void oldLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (selected != oldPath)
+            {
+                Clean();
+                excelWrapper.OpenFile(oldPath, false);
+                splitContainer5.Panel2Collapsed = false;
+                selected = oldPath;
+                oldLink.LinkVisited = true;
+                newLink.LinkVisited = false;
+                openWithLink.LinkVisited = false;
+            }
+        }
+
+        private void newLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (selected != newPath)
+            {
+                Clean();
+                excelWrapper.OpenFile(newPath, false);
+                splitContainer5.Panel2Collapsed = false;
+                selected = newPath;
+                oldLink.LinkVisited = false;
+                newLink.LinkVisited = true;
+                openWithLink.LinkVisited = false;
+            }
+        }
+
         #endregion Events
 
         #region Methods
         private void ListDirectory(TreeView treeView, string path)
         {
+            tempNode = null;
             key.SetValue("Path", path);
             treeView.Nodes.Clear();
             var rootDirectoryInfo = new DirectoryInfo(path);
@@ -294,6 +323,22 @@ namespace EmbeddedExcel
             catch
             { }
         }
+
+        private void Clean()
+        {
+            excelWrapper.Dispose();
+            excelWrapper = new EmbeddedExcel.ExcelWrapper();
+            excelWrapper.Dock = System.Windows.Forms.DockStyle.Fill;
+            excelWrapper.Location = new System.Drawing.Point(0, 0);
+            excelWrapper.Margin = new System.Windows.Forms.Padding(5);
+            excelWrapper.Name = "excelWrapper";
+            excelWrapper.Size = new System.Drawing.Size(697, 628);
+            excelWrapper.TabIndex = 11;
+            excelWrapper.Visible = false;
+            splitContainer4.Panel2.Controls.Add(excelWrapper);
+        }
         #endregion Methods
+
+
     }
 }
