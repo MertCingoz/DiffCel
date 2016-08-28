@@ -1,4 +1,4 @@
-﻿namespace EmbeddedExcel {
+﻿namespace DiffCel {
 	partial class Form1 {
 		/// <summary>
 		/// Required designer variable.
@@ -44,7 +44,7 @@
             this.oldLink = new System.Windows.Forms.LinkLabel();
             this.newLink = new System.Windows.Forms.LinkLabel();
             this.openWithLink = new System.Windows.Forms.LinkLabel();
-            this.excelWrapper = new EmbeddedExcel.ExcelWrapper();
+            this.excelWrapper = new DiffCel.ExcelWrapper();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();

@@ -11,7 +11,7 @@ using System.Runtime.InteropServices.ComTypes;
 using Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Core;
 
-namespace EmbeddedExcel
+namespace DiffCel
 {
     public partial class ExcelWrapper : UserControl
     {

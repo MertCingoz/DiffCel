@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("EmbeddedExcel")]
+[assembly: AssemblyTitle("DiffCel")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Azuria")]
-[assembly: AssemblyProduct("EmbeddedExcel")]
+[assembly: AssemblyProduct("DiffCel")]
 [assembly: AssemblyCopyright("Copyright © Azuria 2006")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

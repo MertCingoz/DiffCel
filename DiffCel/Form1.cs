@@ -9,7 +9,7 @@ using System.IO;
 using System.Diagnostics;
 using Microsoft.Win32;
 
-namespace EmbeddedExcel
+namespace DiffCel
 {
     public partial class Form1 : Form
     {
@@ -330,7 +330,7 @@ namespace EmbeddedExcel
         private void Clean()
         {
             excelWrapper.Dispose();
-            excelWrapper = new EmbeddedExcel.ExcelWrapper();
+            excelWrapper = new DiffCel.ExcelWrapper();
             excelWrapper.Dock = System.Windows.Forms.DockStyle.Fill;
             excelWrapper.Location = new System.Drawing.Point(0, 0);
             excelWrapper.Margin = new System.Windows.Forms.Padding(5);

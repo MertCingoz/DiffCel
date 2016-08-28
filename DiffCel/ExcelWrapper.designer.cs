@@ -1,4 +1,4 @@
-﻿namespace EmbeddedExcel
+﻿namespace DiffCel
 {
 	partial class ExcelWrapper
 	{

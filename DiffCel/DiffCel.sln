@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbeddedExcel", "EmbeddedExcel.csproj", "{F1460A86-400B-427E-9DFF-0AB53D9A9623}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiffCel", "DiffCel.csproj", "{F1460A86-400B-427E-9DFF-0AB53D9A9623}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
