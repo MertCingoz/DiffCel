@@ -1,17 +1,23 @@
 #DiffCell
 Visual excel differences for git-windows
 
-- Copy excelCompare folder to c:\ 
+## Installation
+### Prerequisites
+- [Git for Windows](https://git-scm.com/download/win)
+- [Java Runtime Environment](https://java.com/en/download/)
+
+### Usage
+- **Copy excelCompare folder to c:\** 
 	> Java based excel comparasion tool downloaded from: [na-ka-na/ExcelCompare](https://github.com/na-ka-na/ExcelCompare)  
 	
 	> Used release ExcelCompare 0.6.0 
 
-- Add fallowing lines to .git\config
+- **Add fallowing lines to .git\config**
 ```
 [diff "excel"]
   command = "C:/excelCompare/exceldiff.cmd"
 ```
-- Add fallowing lines to .gitattributes
+- **Add fallowing lines to .gitattributes**
 ```
 # Excel Compare
 *.xlsx 	 diff=excel
@@ -25,22 +31,24 @@ Visual excel differences for git-windows
 *.xlam	 diff=excel
 *.xlw	 diff=excel
 ```
-- Include java path
+- **Include java path**
 	> Now **git diff** returns excel differences
 
-- Create Temp folder on the root directory of the git repository and include fallowing line to .gitignore
+- **Create Temp folder on the root directory of the git repository and include fallowing line to .gitignore**
 ```
 [Tt]emp/
 ```
-- Include git path
+- **Include git path**
 	> To be able to use git command with DiffCel interface
 
-- Run regedit.reg
-	> To be able to open **embedded** excel in DiffCel.	
+- **Run regedit.reg**
+	> To be able to open **embedded** excel in DiffCel.
+
 	> Otherwise it generates **new excel process** 
 
-- Open DiffCel release and select repository root directory
-#Usefull commands for git:
+- **Open DiffCel release and select root directory of the git repository**
+
+##Usefull commands for git:
 ```
 -git log --pretty=format:"%h|%an|%s|%ci" "path\to\file.extension"
 ```
