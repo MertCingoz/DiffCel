@@ -1,4 +1,4 @@
-#DiffCell
+#DiffCel
 Visual excel differences for git-windows
 
 ## Installation
@@ -54,7 +54,7 @@ Visual excel differences for git-windows
 ```
 gets commits (commitId, Author Name, Commit Description, Commit Date) for specific file   
 ```
--git diff <commitID> <commitId> "path\to\file.extension"
+-git diff <commitId> <commitId> "path\to\file.extension"
 ```
 gets differences between two commit for specific file
 ```
