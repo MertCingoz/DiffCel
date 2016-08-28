@@ -26,7 +26,8 @@ namespace EmbeddedExcel
         private string oldPath;
         private string newPath;
         private string selected;
-        TreeNode tempNode;
+        private TreeNode tempNode;
+        private ListViewItem tempItem;
         #endregion Fields
 
         #region Construction
@@ -99,6 +100,8 @@ namespace EmbeddedExcel
                     lastCommit = e.Item.SubItems[0].Text;
                     listView2.EndUpdate();
                     e.Item.ForeColor = Color.Red;
+                    if(tempItem!=null)
+                        tempItem.ForeColor = Color.Black;
                 }
                 catch (Exception ex)
                 {
@@ -107,7 +110,7 @@ namespace EmbeddedExcel
             }
             else
             {
-                e.Item.ForeColor = Color.Black;
+                tempItem = e.Item;
             }
         }
 
