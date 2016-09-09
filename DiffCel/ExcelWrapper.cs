@@ -147,14 +147,14 @@ namespace DiffCel
             List<string> sheets = new List<string>();
             foreach (Worksheet sheet in m_Workbook.Worksheets)
                 sheets.Add(sheet.Name);
-            foreach (Cell cell in Form1.cells)
+            foreach (Cell cell in Form_Main.cells)
                 if (!sheets.Contains(cell.Sheet))
                 {
                     m_Workbook.Worksheets.Add(Type.Missing, m_Workbook.Worksheets[m_Workbook.Worksheets.Count]).Name = cell.Sheet;
                     sheets.Add(cell.Sheet);
                 }
 
-            foreach (Cell cell in Form1.cells)
+            foreach (Cell cell in Form_Main.cells)
             {
                 int index = sheets.IndexOf(cell.Sheet) + 1;
                 m_Workbook.Worksheets[index].Range[cell.Adress].AddComment("");

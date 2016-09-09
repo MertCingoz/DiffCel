@@ -11,7 +11,7 @@ using Microsoft.Win32;
 
 namespace DiffCel
 {
-    public partial class Form1 : Form
+    public partial class Form_Main : Form
     {
         #region Fields
         public static List<Cell> cells = new List<Cell>();
@@ -31,12 +31,12 @@ namespace DiffCel
         #endregion Fields
 
         #region Construction
-        public Form1()
+        public Form_Main()
         {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void Form_Main_Load(object sender, EventArgs e)
         {
             splitContainer4.Panel1Collapsed = true;
             splitContainer5.Panel2Collapsed = true;

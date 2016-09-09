@@ -1,5 +1,5 @@
 ﻿namespace DiffCel {
-	partial class Form1 {
+	partial class Form_Main {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -23,6 +23,7 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_Main));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -330,18 +331,19 @@
             this.excelWrapper.TabIndex = 11;
             this.excelWrapper.Visible = false;
             // 
-            // Form1
+            // Form_Main
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(934, 548);
             this.Controls.Add(this.splitContainer1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumSize = new System.Drawing.Size(942, 575);
-            this.Name = "Form1";
+            this.Name = "Form_Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "DiffCel";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.Form_Main_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
