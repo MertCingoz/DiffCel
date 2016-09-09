@@ -34,6 +34,7 @@ Visual excel differences for git-windows
 - **Include java path**
 	> Now **git diff** returns excel differences
 
+![alt tag](https://raw.githubusercontent.com/MertCingoz/DiffCel/master/Ss/git-diff.PNG)
 - **Create Temp folder on the root directory of the git repository and include fallowing line to .gitignore**
 ```
 [Tt]emp/
@@ -47,6 +48,8 @@ Visual excel differences for git-windows
 	> Otherwise it generates **new excel process** 
 
 - **Open DiffCel release and select root directory of the git repository**
+
+![alt tag](https://raw.githubusercontent.com/MertCingoz/DiffCel/master/Ss/screen.PNG)
 
 ##Usefull commands for git:
 ```
