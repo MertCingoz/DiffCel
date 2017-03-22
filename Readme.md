@@ -1,4 +1,4 @@
-#DiffCel
+# DiffCel
 Visual excel differences for git-windows
 
 ## Installation
@@ -7,17 +7,17 @@ Visual excel differences for git-windows
 - [Java Runtime Environment](https://java.com/en/download/)
 
 ### Usage
-- **Copy excelCompare folder to c:\** 
+- **Copy excelCompare folder to c:\\**
 	> Java based excel comparasion tool downloaded from: [na-ka-na/ExcelCompare](https://github.com/na-ka-na/ExcelCompare)  
 	
 	> Used release ExcelCompare 0.6.0 
 
-- **Add fallowing lines to .git\config**
+- **Add following lines to .git\config**
 ```
 [diff "excel"]
   command = "C:/excelCompare/exceldiff.cmd"
 ```
-- **Add fallowing lines to .gitattributes**
+- **Add following lines to .gitattributes**
 ```
 # Excel Compare
 *.xlsx 	 diff=excel
@@ -51,7 +51,7 @@ Visual excel differences for git-windows
 
 ![alt tag](https://raw.githubusercontent.com/MertCingoz/DiffCel/master/Ss/screen.PNG)
 
-##Usefull commands for git:
+## Usefull commands for git:
 ```
 -git log --pretty=format:"%h|%an|%s|%ci" "path\to\file.extension"
 ```
